@@ -1,0 +1,12 @@
+Mục tiêu: tạo 1 app single instance. Tức ấn đúp vào nhiều lần thì sẽ chỉ mở ra 1 cửa sổ đầu tiên r focus vào nó. Mỗi khi ấn tiếp thì cửa sổ đầu sẽ hiện thông tin gì đó của instance mới ấn. 
+
+Cơ chế: tạo ra 1 cái server và client. Khởi động thì bật server listen. Trong main ta sẽ gọi hàm kiểm tra lấy tên và arg. Trong hàm kiểm tra thì ta sẽ tạo ra 1 local socket kết nối với server với cái tến server là tên truyền vào, ta lấy bất cứ 1 cái tên fix nào. Gọi waitForConnection.Hàm này trả về true khi connect thành công ,nếu chưa thì chạy tiếp.
+Để lấy thông tin ra ví dụ ta lấy cái arg truyền vào hàm. Thì ta sẽ phải dùng socket->write(<thông tin cần truyền>)=>ta cần tạo hàm newConnection và connect readyRead để lấy thông tin nếu nó gửi thì ta bắt và readAll là lấy đc thông tin thôi-> xử lý thế nào thì tùy.
+
+Lưu ý: Mỗi 1 instance ta đều có 1 server và 1 client. Ở instance đầu tiên khi chạy, ta kiểm tra thì nó connect fail là phải r vì server còn chưa thiết lập. Ta gọi hàm kiểm tra đầu tiên ngay khi vào app. Sau đó thì server.listen đã đc thiết lập, các instance đằng sau đều kết nối thành công nên bị return luôn.
+
+Cái local server và local socket k có địa chỉ=> nhưng server lại có tên. Cái local socket gọi setServerName khi chưa có kết nối để set tên cho cái peer sẽ connect với cái socket này, sau đó ta gọi connectToServer(mode). Nếu chưa set tên thì có thể connectToServer(name,mode).
+Như v thì local server ta listen(QString) chứ k có network address là cái ip. Như kiểu nó bị giới hạn phạm vi trong các máy tính cục bộ vì là named pipe.
+Tưởng tượng là trong cái máy tính của ta, ta có thể tạo ra nhiều named pipe để giao tiếp trong máy dưới dạng client server. Mỗi server ta cho listen 1 tên cụ thể để pb với nhau chứ k dùng ip address, r cho socket kết nối vào cái tên đó. Ta có thể tạo vô số server với tên khác nhau.
+
+Về vấn đề xóa: Ta muốn trong suốt quá trình sử dụng thì cái app của ta luôn là single instance nên ta chỉ delete cái server khi tắt cái Ct đi. Còn cái socket ta chỉ dùng để kiểm tra kết nối mỗi lúc đầu nên ta xóa đi ngay lập tức nếu có thể. Nên khi ta lấy thông tin xong ta xóa ngay=>biến cục bộ

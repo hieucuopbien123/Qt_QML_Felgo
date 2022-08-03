@@ -1,0 +1,20 @@
+Để dùng multimedia và multimediawidgets trong qt phải thêm module đó.
+#include <QtMultimedia> và #include <QtMultimediaWidgets> để dùng mọi thứ
+
+audio interface là thiết bị cho phép máy tính, điện thoại thu âm nhạc cụ, vocal->Đương nhiên ta có thể thu âm bằng trình ghi âm trên điện thoại nhưng chất lượng như buồi. 
+Latency(độ trễ) là hiện tượng âm thanh thu vào bị chậm hơn so với thực tế. Đó là khoảng thời gian từ khi âm thanh phát ra đi vào thiết bị cho đến khi thiết bị phát lại nó ra loa chẳng hạn. Như v độ trễ thấp sẽ tốt, và audio interface có thể giúp ta giải quyết vấn đề này cho độ trễ vô cùng thấp=>ví dụ ta cầm mic nói vào phát là loa phát ra ngay. Tuy nhiên ta sẽ k để nó quá thấp mà ở mức vừa đủ ví dụ 12ms thì sẽ tốt hơn vì khi độ trễ quá thấp thì máy tính sẽ làm vc càng nặng. 
+Zero latency là tính năng 1 số audio interface hỗ trợ cho input đầu vào và phát mẹ ra loa luôn-> Điều này quá tốt khi ta muốn live với vc nói và truyền tốc độ cao không thông qua máy tính. Nhưng nếu ta muốn chèn các âm thanh hay hiệu ứng delay, echo bằng máy tính thì k đc.
+audio interface có thể có nh cổng, vd khi ta chơi 3 nhạc cụ thì sẽ cần tới 1 interface có 3 cổng input, 3 output.
+Tuy nhiên delay trong audio còn là độ trễ khi ta nói vào mic thì nó còn vang lại với âm lượng giảm dần. Điều này được ứng dụng chủ động tạo ra làm hiệu ứng chứ kp là vô dụng ví dụ trong karaoke.
+
+Máy tính của ta chạy audio và video ntn? Nó dùng codec. Các tập tin phim ảnh, âm nhạc thường lớn và khó chia sẻ qua mạng-> để tăng tốc độ, ng ta dùng toán học để mã hóa rút gọn dữ liệu nhỏ đi(encode), sau đó giải mã để xem và chỉnh sửa(decode). Nếu k có codec làm vc đó, tốc độ ta tải các file vid,au sẽ tăng lên 3-5 lần bth. Có các codec để nén, phát audio,video, gọi video,chụp ảnh màn hình,..->hàng trăm loại trên mạng
+Các codec phổ biến như MP3,WMA,.. Ví dụ máy tính của ta mà éo có codec MP3 thì nghỉ đọc đuôi mp3 nhé. 
+AVI là đuôi mở rộng vid nhưng tự thân của nó kp là codec, mà chỉ là 1 định dạng lưu vid dùng đc với nhiều codec.
+Các codec thường đi liền với phần mềm phát vid or nghe nhạc mà ta tải về. Trong quá trình sử dụng nếu gặp những vid,au mà k chạy đc vì thiếu codec thì ta phải tải riêng gói codec đó về. Ví dụ: trình phát của win: Windows Media Player sẽ báo codec nào thiếu để phát và yêu cầu tải về.
+Ta tải 1 file âm thanh nào đó trên mạng về-> nó đc mã hóa thành mp3 chẳng hạn-> giải mã nó để nghe nội dung bên trong bằng mp3 codec=> cứ mỗi lần nghe là 1 lần giải mã như v(tốc độ cực nhanh).
+
+MP3: định dạng file bằng cách nén dữ liệu tổn hao=> giống JPEG nén ảnh sẽ bỏ đi những chi tiết mà mắt người k nhìn thấy làm ảnh nhẹ hơn nhưng bị hao hụt chất lượng dù k ảnh hưởng. Mp3 sẽ xóa đi những phần âm thanh k nằm trong khoảng nghe đc của con người.
+
+=>Để chạy đc video, ta phải có cả video codec và audio codec.
+
+Có 1 thư viện libVLC cho qt để quản lý cái video dễ hơn là third party cài ngoài

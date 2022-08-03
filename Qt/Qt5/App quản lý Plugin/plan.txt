@@ -1,0 +1,43 @@
+﻿luyện tập: XML+Server Tcp+plugin+multithread pool+ 
+
+Cơ chế: giao tiếp với ng dùng bằng telnet: test xem plugin và server có thể làm đc đến đâu
+
+Thực tế: tạo 1 server kết nối với ng dùng qua 1 cổng-> khi người dùng kết nối thành công sẽ gõ các lệnh gửi dữ liệu cho server-> các lệnh đó như là command line v, mỗi lần enter server sẽ nhận lệnh và thực hiện yêu cầu của ng dùng-> các commmandline bắt buộc có ví dụ như liệt kê và tắt hay quay lại,....->kết hợp vs plugin: đây sẽ là 1 server thực hiện kết nối plugin-> sẽ có các commandline gọi liệt kê các plugin, thực hiện các lệnh của plugin, kết nối cx như xóa plugin
+
+các class bắt buộc có: phải có plugin sẵn-> khai báo interface trong project-> 1 class server thực hiện vc kết nối gọi tới 1 class client là socket của server->main sẽ chạy server->khi ta gọi hàm cho socket client, 1 class lo liệu vc thực hiện các lệnh của plugin đc thực hiện -> 1 class lo liệu bắt command và xử lý command(còn vài class nx xem video)-> kết hợp thao tác xml-> thêm các tính năng khác
+
+ta nghĩ răng luồng chính chỉ cần: chạy Ct là server lắng nghe trên cổng->telnet là kết nối ngay-> bắt signal readyread->có dữ liệu thì sẽ nhận dữ liệu đó và xủ lý-> lấy các lệnh và argument của lệnh->nếu lấy xong thành công thì server sẽ phát signal và ta cần xử lý làm gì với cái lệnh đó-> 1 class chứa các enum lệnh sẽ kiểm tra xem lệnh đó là lệnh nào và thực hiện lệnh bên trong->nếu có lỗi thì set trạng thái lỗi-> sau khi thực hiện xong thì phát signal để server in cái dòng thông tin ra màn hình
+với các lệnh thực hiện là cần dùng plugin-> ta phải có biến plugin loader và gọi load nó nhưng ta đã biết rằng 1 Ct k thể chỉ load 1 plugin: ta tạo ra 1 danh sách lưu các plugin lại-> để làm đc điều này thì biến phải lưu 2 thứ là plugin interface và plugin loader(mỗi 1 cái loader có thể lưu 1 plugin và phải tồn tại trong quá trình plugin đó chạy, bị xóa khi plugin đó xóa k dùng nx)
+
+phân chia ra nhiều hàm nh class nhỏ, k làm nh chức năng 1 hàm
+
+1 server lắng nghe trên cổng mở và dùng nó trong main-> tạo socket cho nó là multithread luôn bằng thread pool-> ta có khi ta gõ lệnh vào thì tức là phát ra signal ready read-> nó sẽ bắt nội dung->signal disconnted khi nó ngắt thì ta cx xóa
+->để bắt nội dung: tạo 1 string lưu nội dung va khi \n thì bắt lệnh-> để bắt lệnh cần tạo ra 1 class chung->class chung phải ở phía server->tạo và phân loại lệnh nếu gặp lệnh nào thì làm gì
+gặp lệnh install-> phân chia ra chỗ nào là lệnh chỗ nào là arg->thế thì k nên lưu riêng mà hãy để 1 class lưu request sẽ cho ta các arg và lệnh-> để install cần dùng QPluginLoader-> nên dùng 1 class lo vc này và ta chỉ cần dùng class đó trong manager
+Ta có 1 Ct có thể có nh plugin nhưng nếu muốn dùng nhiều plugin và dùng nó rời rạc k chỉ giới hạn trong 1 hàm->nó như là cửa sổ ấn là hiện v, ta cần có biến con trỏ lưu cái plugin và ta muốn là sau khi ta cài cái plugin vào r thì muốn dùng lúc nào ở bất cứ đâu ta đều gọi đc chứ kp install xong dùng luôn r tắt ngay->lấy 1 lần dùng nh lần;
+để làm đc điều đó thì phải có 1 list cái interface thực hiện lệnh đc lưu lại trong nó-> cái plugin nào thì lấy cái interface ra thực hiện. Nhưng vấn đề ở đây là bên cạnh vc lưu interface ta cx cần lưu lại cái biến QPluginLoader của cái interface đó vì 1 loader chỉ load đc 1 plugin và khi dùng xong thì cần unload cái plugin thì phải dùng chính cái loader dùng để load mà unload
+
+-> do clean code nên ta phải hiểu manager là 1 class nhận command và thực hiện command->thực chất vc thực hiện command bao gồm rất nhiều vc khác, đúng ra là nó xử lý command-> như v vc load cái plugin thì ta nên giao cho 1 class khác đảm nhiệm(quen dần cái tính phân chia thế này đi)->class đó sẽ chứa QPluginLoader và interface->nó phải chứa 1 list bọn chúng và sẽ thực hiện các lệnh với plugin cần thiết để trả ra cho class manager thực hiện command ta yêu cầu-> và cái nhiệm vụ class này xử lý plugin nhưng vc chứa plugin thì ta có là cái plugin phải đi cùng với loader-> có thể tạo 1 class lưu Plugin và Loader tương ứng r khai báo nó trong cái class xử lý plugin
+
+->Quy trình tổng quát: tạo ra 1 class A thực hiện 1 chức năng lớn-> chức năng lớn đó bao gồm 2 chức năng nhỏ chẳng hạn thì ta lại cần 2 class B,C chuyên xử lý 2 cái nhỏ-> như v thì ta khai báo A chứa B,C(là 1 thuộc tính)(nếu cần nhiều B,C thì lưu 1 list)-> r ta khai báo các hàm trong 2 cái classs B,C để xử lý chức năng nhỏ->sau đó ta dùng các hàm đó or lấy các giá trị trả về và thuộc tính của nó trong hàm mẹ để phục vụ cho vc thực hiện chức năng lớn(có thể hiểu sự chia nhỏ code là như v, chức năng lớn vẫn phải thực hiện trong hàm mẹ đó)->các chức năng nhỏ có thể chia thành các chức năng nhỏ hơn tạo thành đường dây mà ta làm theo thứ tự từ cao đến thấp tự nghĩ ra-> chứ các Ct lớn ta k nên nghĩ cả 1 cục phân chia hết r mới làm thì rất khó ra->tư duy: viết test trc khi viết hàm
+->Tuy nhiên 1 Ct cực lớn thì sẽ k có chuyện làm một chức năng mà là làm nhiều chức năng->Tuy nhiên điều đó k tách rời đc PP trên răng A chứa B,C
+
+->Áp dụng quá trình đó phân tích bài này ở thời điểm hiện tại: ta có 1 Ct là server nhận lệnh command từ ng dùng và thực hiện, các command đó là thao tác với plugin-> như v về lý thuyết là Ct lớn của ta phải tạo server, nhận lệnh,xử lý lệnh, thao tác với plugin như cài nó và xóa nó hay liệt kê,..->nhưng 1 class k làm vc này đc,ta đi từ gốc là tạo 1 server class A-> còn các công vc khác ta tạo ra class B xử lý nhận lệnh từ ng dùng, rất may k cần tạo B trong A vì nó chỉ gói gọn trong incomming connection do cơ chế của TCP server-> xử lý lệnh ta sẽ tạo class con C để nhận lệnh và xử lý các thứ, nhét C vào A
+(vc nhét vào còn có ích nếu làm cái gì ở biến đo để dùng cho hàm ban đầu thì còn phát signal cho nó bắt)
+->nếu ta nhét C vào B thì cx đc cx k có sự khác biệt mấy tuy nhiên ta có thể xem xét là manager xử lý lệnh này nên là con của cả server hay chỉ là con của 1 cái thread chứa socket server->ở đây ta nhét vào A vì k thích 1 cái thread nó quá lớn phức tạp->và cái xử lý lệnh làm chung chứ k tạo mới với mỗi connection
+->trong C xử lý lệnh là ta có lệnh r nhưng để xử lý phải lấy cái plugin và cả loader để còn thực hiện lệnh xóa -> 1 class xử lý plugin ra đời class D, nhét D vào C. Có thể ta sẽ thắc mắc là tại sao lại cần 1 class như v trong khi ta hoàn toàn có thể QPLuginLoader luôn->rõ ràng là vc khởi tạo 1 list các QPluginLoader vs Interface trong class xử lý lệnh thì quá loạn, class xử lý lệnh cũng làm các lệnh khác nx mà. Ngoài ra, ta có thể cần những thao tác phức tạp với plugin k thể làm hết trong class xử lý lệnh. Và vc 1 trình xử lý plugin là 1 thành phần của trình xử lý lệnh là điều rất hợp lý
+->Bên cạnh đó ta có thể gom chung nhiều thuộc tính giống nhau thành 1 class-> ví dụ class request giúp ta lưu và lấy command chính, các argument->class response nx chẳng hạn,ta có thể dùng các hàm với các thuộc tính đo như lấy argument từ Xml, lấy từ QString,ghép các argument chẳng hạn, or ta cần plugin và loader của cái plugin đó đi kèm với nhau nên tạo thêm 1 class PluginItem lưu chung 2 cái đó
+->với cái tư duy hướng đối tượng như v mới làm đc các dự án phức tạp cần chia nhỏ ra rất nhiều class mà các newbie nhìn vào éo hiểu j
+
+Chú ý khi tạo ra 1 console application với core mà dùng plugin có gui thì sẽ báo lỗi-> để dùng đc với gui và widgets cần: thêm module vào file pro, chỉnh sửa file main từ QCoreApplication thành QApplication là biến app
+(QMessageBox chỉ cần module widgets, k cần gui)
+
+Qt::DirectConnection do slot ngay lập tức ở thread của máy phát
+Qt::QueuedConnection do slot khi nào quay lại cái thread máy nhận
+Qt::AutoConnection máy nhận ở trong thread của máy phát-> dùng Qt::DirectConnection. Otherwise, Qt::QueuedConnection is used. The connection type is determined when the signal is emitted.
+Vd dụ về connection: 
+{qDebug() << "1";emit test("Hello");qDebug() << "2";}. Nếu slot bắt signal kia là direct thì sẽ hiện 1->chạy slot->hiện 2, và cái slot thực hiện ngay trong thread hiện tại của biến có hàm này; Nếu slot bắt signal kia là queue thì sẽ hiện 1->hiện 2->chạy hết hàm của biến này và quay về cái thread của máy nhận->chạy slot
+Giả sử ở TH này ta dùng multi thread, tức là slot thực hiện bởi 1 threadpool độc lập, nhưng máy emit lại là 1 thread bth. Cx tương tự thôi, nếu queue hay direct thì nó sẽ thực hiện tương tự nhưng cái slot luôn luôn độc lập với mainthread
+Chú ý là khi dùng multithread như v thì slot k đc để slot truy cập vào 1 biến mà 1 thread khác ví dụ mainthread cũng đang chỉnh sửa biến đó
+
+Ta biết cách dùng thread để biến 1 hàm bất kỳ thành thread riêng, dùng thread với asynchronous nhưng vẫn còn thiếu cái gì đó?

@@ -1,0 +1,29 @@
+﻿Cryptography: mật mã học. Trong CNTT ta dùng nó trong vc bảo mật dữ liệu khi truyền tin. Nó yêu cầu tính bảo mật(confidentiality:ng dùng ngoài k thể truy cập), tính toàn vẹn(integrity:phải nguyên vẹn mọi TH), availability(truy cập bất cứ khi nào cần), tính k thể chối bỏ(non repudiation:ng gửi hoặc nhận k thể chối bỏ vc đã gửi hoặc nhận)
+
+Khi nói về mã hóa điện tử trong IT có 4 loại: Symmetric encryption, Asymmetric encryption, Hash functions, Digital signatures.
+
+Symmetric Encryption(Mã hóa đối xứng) or gọi là Secret Key Cryptography (hay Private Key Cryptography): có 2 qtr encryption là quá trình mã hóa một thông điệp trở thành không-đọc-được. Decryption là quá trình ngược lại với encryption. Với phương pháp symmetric encryption, key được dùng khi mã hóa và giải mã là một.
+Thuật toán dùng là AES.
+
+Asymmetric encryption(mã hóa bất dối xứng) or gọi là Public-key cryptography(mã hóa chia sẻ khóa công khai): mã hóa đối xứng có nhược điểm là cùng 1 key nên phải gửi key cho đối tác qua internet là môi trường k an toàn. Asymmetric encryption sẽ sinh ra 2 key có quan hệ toán học. 1 key là private chỉ ta ms có, 1 là public key gửi cho đối tác, chia sẻ vs mn đc.Cơ chế: client yêu cầu kết nối->server gửi public key của mình cho client->client phát ra 1 symmetric cipher và encrypt nó bằng public key gửi cho server-> server decrypt nó và lấy ra symmetric cipher-> 2 phía đều có cùng 1 symmetric cipher(mục đích là nv), chúng dùng nó để tạo 1 sercure connection sử dụng symmetric cipher.
+Vấn đề: khi server gửi cho client 1 public key thì làm sao biết client biết đc cái đó là hàng thật, vì có thể khi gửi yêu cầu kết nối thì 1 thg nào đó trong internet bắt đc, nó đóng giả làm server thật và gửi public key đểu qua=> ta sử dụng Public key infrastructure. Đó là vc ta gửi nó cho cerfiticate authority là 1 nơi tổng hợp chứa các địa chỉ website và public key of các website đó(khi ng ta mua chứng chỉ ở đây để sử dụng cho trang web thì địa chỉ web và public key of web dó lưu ở đây)=> public key khi client nhận sẽ đc chứng thực bởi CA.
+Thuật toán thg dùng ở loại này là RSA
+
+Hashing function(hàm băm): là hàm 1 chiều, có khả năng mã hóa 1 data đầu vào thành 1 hash nhưng k có cách nào để giải mã theo chiều ngc lại. Nó sẽ tạo ra 1 output độc nhất với mỗi input khác nhau và 1 input thì chỉ luôn cho ra 1 hash duy nhất. Ứng dụng: ví dụ cần xác thực password vì password lưu vào trong DB rất nguy hiểm nên nó thường đc chuyển thành hash lưu vào data base-> khi ta đăng nhập thì password ta gõ sẽ đc chuyển thành hash và ss với hash mật khẩu trong data base-> 2 hash trùng nhau là thành công.
+
+Digital signature(chữ ký số): là sự kết hợp của hashing và asymmetric encryption. Message đầu vào sẽ đc hash và mã hóa tiếp bằng private key, đầu ra là chữ ký được gửi kèm với message. Bên nhận sẽ dùng public key để decrypt thành mã hash của chữ ký, sau đó message cx đc hash để ss với chuỗi vừa decrypt kia. Nếu public key là chính xác và decrypt thành công, ss 2 chuỗi mess hash như nhau thì mess ta nhận là chính xác do bên gửi gửi tới. 
+(tức là nó kết hợp vừa xác thực đc, lại vừa cho thông tin đc truyền qua bảo mật: message ta gửi đc hash và mã hóa lần 2 bằng public key sẽ thành chữ ký số=> nó được gửi kèm với cái message chỉ đc mã hóa bằng public key. Bên nhận sẽ decrypt chữ ký bằng private key thành hash của mess, decrypt cái mess để đc mess nhận đc chuẩn-> xong lại hash cái mess chuẩn-> ta có 2 cái hash=>ss 2 cái hash trùng là xong)
+
+Trong lập trình có các thư viện giúp ta chủ động mã hóa các thứ chúng ta muốn ví dụ mã hóa file. VD: Thư viện Botan mã nguồn mở C++.
+Chỉ cần hiểu CB là mọi người gửi tin đi trong mạng đc mã hóa bằng public key dù ai cx nhận đc nhưng chỉ có ng có private key của cái public key kia mới giải mã đc nội dung bên trong để xem.
+RSA là một giải thuật nổi tiếng sử dụng để sinh ra mã công khai và mã cá nhân nó cũng có thể dùng để mã hóa bình thường.
+SHA cũng là giải thuật sinh mã giống như RSA.
+MD5: Giải thuật mã hóa một chiều mạnh và gần như không thể phá. Các trang web dịch ngược MD5 là do nó lưu từ nhiều nguồn tổng hợp CSDL của vc mã hóa MD5 vào danh sách và tra chứ thực chất k có cách giải mã MD5.
+
+Thư viện botan là công cụ giúp mã hóa dữ liệu và tạo public/private key. Ta sẽ tải và dùng nó trong Qt=>thư viện Botan là C++ chuẩn nên phải dùng lệnh nv, nhưng ở phiên bản mới của Qt nó đã cho ta file botan mà ta dùng dưới dạng class luôn k cần phải include cả thư viện nó. Nó bao gồm khá đầy đủ các hàm cơ bản để mã hóa r. 
+
+Cách thêm 1 thư viện dll bên ngoài vào trong Qt: Ta tải nguồn của thư viện bên ngoài về-> Khi tải về đc 1 bộ thư viện là 1 thư mục trong ổ, bên trong có file lib.dll và 1 thư mục include-> để sử dụng nó trong Ct Qt, ta phải vào file pro và INCLUDEPATH += "<đg dẫn đến thư mục include>" và LIBS += "<đường dẫn đến lib.dll>"-> như v ta cứ include trong main mà dùng nhưng mà sẽ k chạy đc, ta cần copy toàn bộ file dll sang cùng cấp thư mục debug để compile
+Lưu ý: do các thư viện khác ta include vào thì do có thể k tương thích nên các framework thường làm lại cái file dll để tương thích với thu viện từ bên ngoài-> nếu k đc thì ta phải tìm file dll của thư viện bên ngoài mà framework ta đang dùng hỗ trợ để thế chỗ cho file dll trong thư viện động mới dùng đc
+Điều đó k chỉ đúng với Qt mà cx đúng vs các framework khác-> cứ xử lý INCLUDEPATH và LIBS là dùng đc thư viện động.
+Vc ta thêm 1 thư viện bên ngoài thì ta phải dùng hàm trong thư viện đó và dùng những thứ mà thư viện đó dùng, ta có thể phải include, using namespace or dùng các cái lạ nhưng nên nhớ rằng mọi thư viện bh cx có 1 nguồn documentation liệt kê các hàm như thư viện qt cx v, do đó hãy vô đó mà lấy example mà học làm theo.
+Ta cx có thể dùng cách tương tự để tạo thư viện động dll của riêng ta mà dùng.

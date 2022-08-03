@@ -1,0 +1,50 @@
+﻿Trong quá trình chạy Ct tạo file exe thì đầu tiên file main.cpp sẽ đc compile: Ở đây, nó liên kết các file .h khai báo dùng trong main.cpp thành file .o->tiếp theo là nó linking: ở đây nó liên kết với các thư viện động cần dùng trong Ct tạo thành file .exe
+
+Thư viện liên kết động: .dll or .so(system object trong Linux). Các Ct khi chạy đc liên kết với thư viện liên kết động sẽ đọc code trong file dll này để sử dụng. Nó sẽ đọc trong quá trình chạy run-time và chỉ dùng những hàm cần thiết. Khi chạy 1 Ct nào cx có các file dll mặc định chứ kp chỉ file dll do ta tạo ra. VD trong qt: nó sẽ cần đến QtCore5.dll khi chạy Ct chẳng hạn->nếu ta chạy trong QtCreator thì nó tự động xác định vị trí file dll,còn nếu tự chạy trong thư mục debug thì ta phải tự thêm nó vào ms chạy đc.
+
+Thư viện liên kết tĩnh: trong window khi compile bằng compiler của VS thì là đuôi .lib, còn dùng mingw(gcc) cho cả window hoặc linux là đuôi .a; Điểm khác biệt của nó so với dll là nó copy toàn bộ code trong static library vào bên trong file exe, và dùng nó trong compile-time(lúc nó thêm các file.h)=> nếu thư viện động bị lỗi thì sẽ die trong lúc chạy ms thấy,nếu thư viện tĩnh lỗi thì die ngay khi compile r
+
+Các thư viện động thg rất lớn vs nh code nhưng file exe vẫn nhẹ do thêm từ ngoài vô chứ k dính luôn với exe. Thư viện động cho phép nh Ct sử dụng 1 cách TT mà k cần biên dịch lại->sửa đổi file dll k gây lỗi thì chạy theo file dll mới luôn mà k cần biên dịch lại, nhưng thời gian chạy có thể lâu hơn vì đọc file từ đĩa cứng
+Các thư viện tĩnh làm cho Ct phình to ra nhưng compile thành exe xong r thì chạy nhanh vl vì k phải đọc từ file khác mà code có sẵn trong RAM cùng với code Ct r(tốc độ ghi trong RAM nhanh hơn trong đĩa cứng nh). Nếu dùng thư viện nhẹ thì static, nặng thì dùng dll.(có thể hiểu là khi chạy 1 Ct thì toàn bộ những gì nó đã compile sẽ ốp vào trong RAM hết, do đó ứng dụng đang sử dụng mới ngốn RAM và chạy nhanh, tuy nhiên khi ta sử dụng thêm 1 cái gì khác của úng dụng đó mà động đến dll hay các thứ bên ngoài k có sẵn trong Ct (k có sẵn trong RAM) thì những cái đó sẽ ở trên đĩa cứng và nó sẽ lấy từ đĩa cứng.
+
+Các thư viện cả dll và static đều chứa code, class, hàm dưới dạng mã nhị phân=> k thể mở ra như file text->code trong thư viện đc đảm bảo là k bị sửa đổi nếu sử dụng ở Ct khác-> gửi cho ng khác dùng đc mà họ k thể sửa code
+
+Cách tạo và dùng dll trong qt:trong C++ lib chọn shared library->trong file pro sẽ có TEMPLATE=lib->tạo sẵn 2 file .h, trong đó file global sẽ định nghĩa marco. Khi compile thì marco này sẽ tạo ra thứ gọi là symbol, vai trò như 1 cái bookmark đánh dấu báo hiệu rằng cái shared library có thể export đi->tạo lệnh->build nó(k đc run)->copy tất cả .dll của thư viện vào thư mục debug,release của Ct(build để có các cái đó)->chú ý compile file dll ở 32 hay 64 thì phải đúng->vào file pro: LIBS += <path tới file dll>->include file h và dùng. Khi distribute app thì gửi exe và dll.
+
+Cách tạo và dùng static lib trong qt:trong C++ lib chọn statically linked library->viết code cho thư viện->compile sẽ có file.a->vào file pro của Ct: INCLUDEPATH += <link tới thư mục chứa file.h của static>(thư mục chứa file .h đó là thg gọi là thư mục include) và LIBS += <link tới file .a của static có khi compile>->include file.h cần dùng lệnh trong Ct và dùng. Khi distribute thì gửi file .a.
+
+=>Như v ta hoàn toàn k cần phải include từng file .h vào dự án làm nó có header dài ra. Ta chỉ cần xử lý đúng 2 đường link INCLUDEPATH(với thư viện tĩnh) và LIBS(vs cả tĩnh và động). INCLUDEPATH sẽ tới thư mục chứa file .h/.cpp./.c còn LIBS chứa .dll/.a
+
+Phân biệt Extension, Plugin, Add-in, Add-on vs 2 cái trên: 
+2 cái trên là giúp ta thêm thư viện vào để phục vụ cho vc lập trình, sử dụng đc code có sẵn mà k cần tự viết.
+Về cơ bản 4 cái này giống nhau và đc dùng lẫn cho nhau: extension(tiện ích mở rộng);
+plugin: phần mềm có thể do cả 3 bên tạo ra(thứ nhất là nơi viết ra phần mềm, thứ 2 là ng dùng, thứ 3 là hãng viết ra các phần mềm hỗ trợ or bên ngoài) thì plugin có thể giúp cho phần mềm đc mở rộng đính kèm với phần mềm gốc khi mà phần mềm gốc k thể đáp ứng đc nhu cầu ng dùng or đáp ứng đc thì rất mất tg
+module là 1 thành phần 1 bộ phận trong 1 tổ chức. Trong lập trình thì nó là những thành phần có thể tháo ra lắp vào. Ví dụ: gắn 1 đoạn code là 1 module vào để thực hiện 1 thao tác nào đó
+
+Plugin của Ct nó như 1 action làm cj đó ví dụ ấn nút thì làm gì, nó hoàn thiện chức năng khác vs thư viện thì nó cung cấp các cái thứ để ta tạo nên 1 chức năng lớn.Qt cung cấp cho ta QPluginLoader để tạo ra 1 class loads plugin trong lúc run-time cx tạo ra dll và nó thao tác chuẩn có interface và implementation. 
+
+Cách tạo và dùng plugin trong Qt: cần tạo plugin, tạo app sử dụng plugin, dùng nó trong app
+Tạo plugin: dùng empty qmake project-> khai báo TEMPLATE = lib(nó sẽ k có file main để tạo exe, như này sẽ bảo nó k phải tìm hàm main làm gì), TARGET = <tên plugin>(có thể dùng về sau),CONFIG += plugin(để khai báo rằng nó là 1 plugin), VERSION = 1.0.0(cái này là bắt buộc khi dùng TEMPLATE, nó như 1 app riêng nên cần có version)->khai báo 1 file.h làm interface: định nghĩa ra 1 class vs các virtual hàm muốn dùng trong plugin(k co constructor), include QObject(để dùng marco) và khai báo marco rằng đây là 1 interface Q_DECLARE_INTERFACE(,) 1 là cái class là interface, 2 là indentifer là cái duy nhất như ID của interface v(nếu class đc khai báo trong 1 namespace thì phải dùng marco này ở ngoài namespace)-> khai báo cặp file h/cpp là plugin của ta kế thừa từ QObject(để dùng marco) và KẾ THỪA CẢ CÁI interface kia(plugin phải là implementation of interface):include <QtPlugin>, thêm Q_OBJECT(kiểu gì chả có signal slot);Q_INTERFACES(<interface>)(báo nó là implementation of interface nào); khai báo Q_PLUGIN_METADATA(IID "" FILE "") là bắt buộc và ! vì plugin phải có thông tin riêng, IID tương tự là id của interface mà plugin dùng(nên khai báo đúng) và FILE là optional là file .json chứa metadata(cung cấp thêm thông tin) cho plugin k có thì bỏ. Điều đb là marco này bắt buộc phải có ở phiên bản qt5 trở lên để báo hiệu rằng nó là 1 plugin và ta k cần dùng Q_EXPORT_PLUGIN2 như ở phiên bản Qt<5 nx->sau đó ta khai báo tất cả hàm trong interface muốn dùng như nào là xong. Ở các phiên bản thấp hơn, ta phải dùng Q_EXPORT_PLUGIN2 vs tên trong biến TARGET trùng với class ở file cpp->k qtr
+
+Tạo app dùng plugin(nó khá giống dll):build plugin sẽ có dll(có file dll là xong khỏi cần app nx)->ta nhét file interface.h vào trong app(add Existing File(nên copy file h vào thư mục app vì trỏ đến file h chỗ khác nó k gọn))(thì mới dùng đc các hàm bên trong plugins)->tạo biến QPluginLoader truyền vào đường dẫn file dll of plugin(biến này sẽ load cái plugin của ta at run-time)->lấy cái instance của file dll đó và cast sang biến interface đã có trong file interface.h của ta->dùng bth
+(ta biết là 1 abstract thì k thể khai báo biến đc(vì k có implementation) nhưng ở đây biến của ta là plugin có implement r nên ta ms cast sang và dùng đc)
+(vs plugin ta k cần chỉnh sửa gì file pro ở phía app hết khác vs thư viện, cứ nhét file đúng vị trí và dùng thôi)
+
+plugin hay dll nó khá giống vc ta khai báo thêm 1 cặp h/cpp và dùng trong app(ta có thể dùng vs các thuộc tính trong app bằng cách truyền đối số đầu vào hàm),nhưng thư viện ta dùng khi có 1 lượng hàm lớn có các thuộc tính và định nghĩa rất nhiều hàm làm vc vs thuộc tính đó để tạo 1 chức năng lớn(dùng dll vì ta chỉ lấy ra những hàm cần dùng), còn plugin chỉ dùng khi làm hoàn toàn 1 chức năng nào đó, h/cpp dùng cx ok nhưng nếu Ct quá dài thì nó như static lib v.
+
+1 Ct qt bth có 3 module là core, gui và widgets:
+Qt Core: thread,QList,...(bắt buộc có và tự động có)
+Qt GUI: Thành phần chính để lập trình giao diện.
+Qt Widgets: Các widget btton, hộp thoại và những thứ tương tự trong giao diện đều gọi là các widget.
+->ví dụ ta dùng Plugin mà cần hiện ra message box thì tự thêm module cần dùng vào bằng QT+=widgets
+
+Ngoài ra còn có các biến khác trong pro file, như QMAKE_PROJECT_NAME=<tên>(xác định tên của project khi phát nhưng chỉ dùng cho VS);biến TARGET mặc định sẽ mang tên app là tên dự án(file pro) và ta có thể đổi lại hiện tên app .exe ntn theo ý ta; Trong qt cx có sẵn tập hợp các biến môi trường như QT_INSTALL_PLUGINS,QT_INSTALL_EXAMPLES,.. giúp xác định đường dẫn tới các thư mục mặc định của qt khi cài qt;các marco có thể dùng như: QT_VERSION trả về version hiện tại or QT_MAJOR_VERSION vì qt có thể có đa số các hàm ở version nào-> 2 cái khá như nhau; greaterThan là 1 hàm trong makefile(có cả hàm); Khi ta cần deploy cái app của ta thì cx cần dùng, target là 1 biến lưu, target.path của nó giúp specific cái đường dẫn khi ta deploy app. Biến INSTALLS+= target sẽ specific đường dẫn install ở đâu->cần test thêm; isEmpty có tác dụng kiểm tra xem có trống k; khi dùng giá trị của biến trong đường dẫn trong makefile thì phải dùng $$ vì Ct sẽ đọc là $, cx như \\ đọc là \;
+QT_VERSION_CHECK(,,) marco kiểm tra version nhận major,minor,patch. 1 version bh cx có 3 thành phần VD: 4.2.1 tức là major=4, minor=2, patch=1. major tăng khi 1 sự thay đổi lớn xuất hiện(rủi ro cao), minor tăng khi chỉ thay đổi mức độ medium xuất hiện(rủi ro tb), patch tăng khi 1 bản vá đc xuất hiện(rủi ro thấp). Đó là lý do các phiên bản alpha,beta là pre-release có 0.x.y là phiên bản thử nghiệm nên có số 0, và họ chỉ mới bổ sung và sửa đổi để phù hợp release chứ chưa xuất bản. QT_VERSION trả ra số éo hiểu gì cả, ta có thể kiểm tra có lớn hơn version 5 của qt k,VD:
+ #include <QtGlobal>//để dùng các marco QT_VERSION
+ #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+ #include <QtWidgets>
+ #else
+ #include <QtGui>
+ #endif
+
+Trong qt example họ dùng TARGET=$$qtLibraryTarget(<tên>) với plugin or thư viện và vì qtLibraryTarget là cái mà họ specific như 1 biến môi trường rằng đây là 1 Lib target nó k khác biệt với khai báo TT là mấy.

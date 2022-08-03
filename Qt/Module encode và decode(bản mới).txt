@@ -1,0 +1,39 @@
+# Encode và Decode
+
+
+-> Phân biệt: 
+- Mã hóa và giải mã encrypt và decrypt là dùng trong bảo mật thông tin, làm cho 1 cục thông tin thành k thể đọc được r giải mã nó thành đọc được theo 1 quy chuẩn nhất định
+- Dịch ngôn ngữ: ví dụ dịch tiếng Pháp sang tiếng Đức là việc dịch sang cùng ý nghĩa, mặt chữ khác nhau
+- Encode và decode thực ra chỉ là định dạng của ký tự. Người ta thường encode để phục vụ cho vc lưu trữ r decode để đọc nó. Họ cx encode/decode theo 1 quy chuẩn nhất định. Như v chỉ là mục đích khác nhau encrypt để bảo mật còn encode để lưu trữ. Ví dụ ta encode và decode âm thanh hay hình ảnh để tải về và sử dụng.
+
+-> Tuy nhiên khi encode và decode với text thì khó hơn nhiều. Giả sử máy của ta cần hiển thị 1 đoạn văn bản bất kỳ. Ta nhét đoạn text đó vào, máy xác định đoạn text đó được viết dưới định dạng gì, set cho máy hiển thị text dưới định dạng đó là xong. 
+
+Như vậy, chữ ta gõ tiếng việt là dưới định dạng UTF-8 hiển thị unicode. Máy của ta phải dùng UTF-8 encoding ký tự unicode để lưu. Mỗi lần mở ra thì notepad sẽ dùng UTF-8 decode văn bản Unicode hiển thị ra cho ta sử dụng. 
+Phân biệt: Unicode > ASCII là 1 kiểu lưu các ký tự văn bản. Ví dụ nếu dùng ASCII thì k viết đc các ký tự có dấu hay các ký tự lạ, do đó ng ta mở rộng ra 1 bảng unicode bao gồm cả các ký tự ASCII và sau đó là các ký tự khác. Nó đơn giản chỉ là 1 cái bảng lưu các ký tự ta dùng, klq j đến encode/decode. Bảng Unicode bao hết các ký tự mọi ngôn ngữ trên toàn cầu r.
+UTF-8 là 1 trong các kiểu để encode. Với PP này, họ chia bảng Unicode thành 3 phần, phần 1 là ASCII dùng 1 byte, các ký tự sau phức tạp hơn cần nhiều byte hơn để lưu thì sẽ dùng đến 2 bytes or 3 bytes.
+Họ dùng số byte đó để biểu diễn 1 con số cho mỗi ký tự, số này chính là mã ánh xạ ký tự đó trong bảng Unicode.
+UTF-16(2byte) và UTF-32(4 bytes cho 1 ký tự) dùng nhiều byte hơn cho mỗi ký tự-> điều này rõ ràng là k cần thiết vì phí bộ nhớ. 
+
+-> Phân biệt thuật ngữ khác:
+Font chữ: là cách viết khác của ký tự đó mà thôi. Bảng mã Unicode khi biểu diễn ký tự là tập hợp nhiều font chữ khác nhau.
+Kiểu gõ: có 2 kiểu là Vni và Telex. Kiểu Telex ta gõ bằng Unikey, VD: a+a=â
+
+-> Định hình lại:
+-Các ký tự trung hoa hay nhật bản mà k thể biểu diễn bằng các chữ latinh a,b,c,d,.. thực ra cũng là unicode hết, unicode nó bao gần hết mọi ký tự. Các app của ta đều có thể hiện unicode hay hiện đc hầu hết mọi ký tự có điều đôi lúc ta phải set cho nó encode UTF-8 để làm điều đó.
+=>Rõ ràng là nó có thể hiện mọi unicode mà mọi văn bản hiện hành đều là unicode v thì tại sao có những lúc hiện ra dấu ? ví dụ notepad-> là do k đúng kiểu decode. 1 văn bản mà sai kiểu decode thì nó sẽ chả ra ký tự gì hết nên máy mới hiện ra ký tự mặc định là dấu ?=> ví dụ nhét 1 văn bản lưu định dạng SHIFT_JIS vào notepad cho decode bằng UTF-8 lại chả toang.
+-Chính vì v, tùy vào nơi nào hiển thị mà ta có vô số kiểu encode khác nhau. Chú ý là k có kiểu encode Unicode nhé, mà gọi là UTF-8. HTML/XML khi hiển thị text cũng là 1 kiểu encode HTML/XML. Ví dụ thanh url có kiểu encode là base64
+Máy tính sẽ lưu các ký tự của ta thành các số 0,1 dù encode thế nào đi chăng nữa. Nên nếu ta nhìn 1 dãy số 0,1 thì hiểu đó kp là văn bản, đó là thông tin mà máy lưu. 
+Ví dụ ta nhìn thấy 1 dòng chữ nhật bản chẳng hạn-> đó 100% là unicode. Ta k thể nhìn thấy các ký tự mà máy đã encode. Ta chỉ có thể nhìn thấy các ký tự máy đã decode nó để hiện thị ra rồi->có thể thử nhìn ký tự đã encode bằng qInfo cái QTextCodec fromUnicode() ra->toàn dấu ? chứ có cái gì đâu. Định dạng ký tự của văn bản đã encode là k xác định
+=>trong qt giả sử ta có 1 văn bản QString là chữ nhật r dùng QTextCodec với SHIFT_JIS để encode nó thì hiển nhiên là ta gọi hàm from unicode vì chữ nhật đó là unicode. Xong ta hiển thị nó ra thì đó chính là ký tự mà sau khi nó encode thành, 1 dãy định dạng k rõ (máy cũng sẽ lưu số 01 thôi), xong decode nó bằng hàm toUnicode bth sẽ hiện lại dòng chữ. Đó là vai trò của TextCodec để encode và decode. Cho phép người dùng lưu văn bản bằng encode nào và đọc 1 văn bản khác bằng kiểu decode nào. Ví dụ cái notepad của ta mặc định là lưu và đọc bằng UTF-8. Ta có thể setting chế độ encoding cho người dùng tùy chỉnh-> lấy QTextCodec ra encode nó r lưu lại. Tương tự đọc 1 văn bản ng dùng cũng chỉnh r lấy QTextCodec ra decode r hiển thị như notepad v. 
+-SHIFT_JIS là 1 kiểu encode/decode phổ biến trong các document ở Nhật. Ví dụ vào 1 trang web tiếng nhật ngày xưa, nó dùng SHIFT_JIS để encode nên vào bằng trình duyệt mà k biết là phải decode bằng SHIFT_JIS thì sẽ k hiển thị j cả, lúc đó nó hiển thị các dấu ?
+-Charset là các kiểu encode/decode. Ngày nay các trình duyệt hỗ trợ thẻ meta có kèm charset để mọi ngôn ngữ đều ok. Đó là:
+<meta http-equiv="Content-Type" content="text/html;charset="UTF-8"">
+-Điều này tưởng chừng như ổn rồi vì cứ đập vào mặt 1 chuỗi văn bản ký tự unicode có thể hiểu đc thì hiển thị nó ra bình thường thôi nhưng nếu người ta lại nhập vào 1 văn bản được encode bằng kiểu khác thì sao. Tức là 1 văn bản đúng là unicode nhưng được encode bằng kiểu kp là UTF-8 mà bằng SHIFT_JIS chẳng hạn và văn bản đó là vô nghĩa chưa đc decode=>ta phải bảo người dùng xác định kiểu encode văn bản này r decode nó ra r hiển thị ra màn hình. Nếu k sẽ hiển thị ra 1 văn bản được encode bằng SHIFT_JIS nhưng decode bằng UTF-8 chắc chắn toàn dấu ?
+Ví dụ: 1 ứng dụng nhận được 1 văn bản Unicode-> lưu-> ứng dụng encode nó theo định dạng ta set-> chuyển sang các số 01 và lưu các số 01-> mở-> ứng dụng chuyển từ 01 sang chữ-> decode theo định dạng đúng của nó-> hiển thị nội dung đã decode. 
+->Nếu văn bản ban đầu có dấu sắc mà ta cho encode bằng ANSI ngay lập tức ký tự đó biến thành ?
+-Nếu văn bản đó được encode bằng 1 ứng dụng khác sử dụng SHIFT-JIS(nó lưu lại file bằng encoding SHIFT_JIS)-> decode bằng UTF-8-> sai ngay. Do đó nếu ta dùng notepad tạo bằng qt để đọc 1 file-> file đó encode bình thường với UTF-8 thì ứng dụng qt sẽ hiển thị bth. Kiểm tra nếu đọc k đc thì hỏi ng dùng codec j-> dùng QTextCodec với Codec đó để decode nó bằng toUnicode-> hiển thị ra.
+K dùng QString mà dùng QByteArray trong quá trình encode và decode vì ta phải thao tác trực tiếp với byte mới hiển thị đúng. K dùng console hiển thị unicode vì nó chỉ hiển thị đc ASCII.
+
+=>kp văn bản nào ta cx encode r decode cùng kiểu là ra văn bản ban đầu. Đó là lý do có nhiều kiểu codec khác nhau ở nhiều vùng miền khác nhau. Ví dụ văn bản tiếng nhật mà ta encode bằng UTF-8 là sẽ ra rất nhiều dấu ? xong decode thì nó k về văn bản ban đầu nx vì UTF-8 k encode chuẩn với tiếng nhật. Tùy từng loại mà phải xác định kiểu encode cho phù hợp. Tương tự kiểu encode ANSI k phù hợp với tv-> do đó ms sinh ra nhiều kiểu encode/decode khác nhau
+Với kiểu encode UTF-8 thì các file sẽ vẫn giữ nguyên như v khi encode xong k đổi
+

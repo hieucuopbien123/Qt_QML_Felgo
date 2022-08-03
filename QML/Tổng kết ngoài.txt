@@ -1,0 +1,13 @@
+-> QML(Qt Modeling Language): 
+Là một ngôn ngữ đánh dấu giao diện người dùng, dùng để mô tả giao diện của một chương trình->ng dùng có thể tạo giao diện đồ họa cao, animation, trực quan, 3D. (Ví dụ javascript thì ta có css, còn qt thì có qml để tạo giao diện).
+QtQuick: module giúp phát triển giao diện đồ họa bằng ngôn ngữ QML, hỗ trợ phát triển giao diện đồ họa với điện thoại. Nó cung QML API để tạo QML interface và C++ API để dùng ứng dụng QML với code C++, dùng hợp đc với Javascript và C++.
+Tại sao lại có qml? Ta hoàn toàn có thể dùng C++ với OpenGL để làm từ đầu. Nhưng C++ rất nặng và ta sẽ phải học từ đầu. Do đó qt xây dựng qml built-in luôn để ta có thể ez làm vc đó và nó có thể dùng kết hợp với javascript để khiến code đơn giản hơn, nếu hoàn toàn là C++ sẽ rất khó->khả năng kết hợp nhiều ngôn ngữ với API.
+
+Qt Quick là 1 thư viện, còn qml là 1 ngôn ngữ mà thư viện Qt Quick sử dụng
+
+QML là front end tạo giao diện người dùng, còn C++ là backend. VD ta k nên xử lý logic như encryption chẳng hạn ở front end mà nên dùng C++ để làm. 
+VD: ta có 1 model xử lý dữ liệu ở backend C++ và dùng QML để hiển thị dạng bảng or chart,.. Nhưng qml rất mạnh, nếu thích có thể xử lý model ở front end luôn nếu thích vì qml hỗ trợ code js mà
+QML hơn QWidget ở chỗ nó là đa nền tảng chạy được trên điện thoại nx còn widget chỉ dùng với desktop. QML hỗ trợ hầu hết mọi thứ về giao diện k có giới hạn. Tức là hầu hết mọi thứ ta thấy trên điện thoại giao diện ng dùng thì QML đều có thể tạo ra đc. Trước ta dùng C++ để tạo giao diện cx ok, qml ra đời chỉ là đưa việc làm giao diện lên tầm cao mới, nó có thể làm mọi thứ y như C++ để tạo giao diện desktop app từ trước và cộng thêm nh tính năng mới và đa nền tảng nx.
+Felgo chỉ là 1 third-party sử dụng qml. Ta chỉ dùng mỗi qml cũng được, chả cần felgo.
+QtQuick là 1 standard library chứa component để sử dụng, qml là ngôn ngữ dùng để chỉnh sửa các component đó của qtquick. 
+

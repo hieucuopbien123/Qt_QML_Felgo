@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/src">
+        <file>imgs/close.png</file>
+        <file>imgs/copy.png</file>
+        <file>imgs/cut.png</file>
+        <file>imgs/info.png</file>
+        <file>imgs/new.png</file>
+        <file>imgs/open.png</file>
+        <file>imgs/palette.png</file>
+        <file>imgs/paste.png</file>
+        <file>imgs/print.png</file>
+        <file>imgs/redo.png</file>
+        <file>imgs/save as.png</file>
+        <file>imgs/undo.png</file>
+        <file>imgs/save.png</file>
+        <file>imgs/font.png</file>
+        <file>imgs/mode.png</file>
+        <file>imgs/highlight.png</file>
+    </qresource>
+</RCC>

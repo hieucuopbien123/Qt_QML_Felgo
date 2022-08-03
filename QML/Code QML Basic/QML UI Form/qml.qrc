@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Item1Form.ui.qml</file>
+        <file>Erase.qml</file>
+        <file>EraseForm.ui.qml</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>img/banana.gif</file>
+        <file>img/t2.jpg</file>
+    </qresource>
+</RCC>

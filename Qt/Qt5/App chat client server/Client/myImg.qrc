@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>download.png</file>
+        <file>messenger.png</file>
+    </qresource>
+    <qresource prefix="/new/prefix2">
+        <file>crying.png</file>
+        <file>love.png</file>
+        <file>smile.png</file>
+    </qresource>
+</RCC>

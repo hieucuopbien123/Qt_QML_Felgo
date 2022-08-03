@@ -1,0 +1,58 @@
+﻿App quản lý sinh viên
+
+Các đối tượng:
+1 cửa sổ ghi thông tin, 1 cửa sổ quản lý, 1 csdl lưu hs
+
+thao tác tay: 
+ấn vào add thì hiển thị cửa sổ ghi thông tin-> ấn ok thì tắt tạo và lưu thông tin vào biến hs-> ấn cancel thì k tắt và k tạo
+ấn vào remove thì xóa 1 thành phần trong list
+chọn hs nào thì hiển thị ra thông tin hs để chỉnh sửa-> ok thì lưu-> cancel thì tắt
+
+cửa sổ quản lý:
+hiển thị danh sách
+signal ấn add thì hiện ra 1 cửa sổ-> chơi hiện vô hạn, tạo ra cửa sổ mới liên tục
+signal ấn remove thì hiển thị mess box muốn xóa k-> ok thì xóa , cancel thì thôi
+signal chọn 1 item-> hiển thị dialog để sửa
+
+cửa sổ dialog công vc:
+hiển thị
+signal ấn ok thì tắt, lưu
+signal ấn cancel thì tắt cửa sổ k lưu
+sẽ hiển thị vô hạn đc và đc quyền dùng signal slot với từng cái
+
+công vc sinh viên:
+là csdl thuần túy lưu các thuộc tính là public->vẫn cần signal data change -> kế thừa QObject
+
+Các cv cụ thể:
+cửa sổ chính k có gì đáng nói
+vector lưu thông tin sinh viên trong cửa sổ chính
+dialog là 1 biến của cửa sổ chính khai báo con trỏ ở trong hàm ấn-> cứ ấn là có new(gọi new trong hàm thì vc là biến tv của class chỉ lợi hơn là dùng đc nó trong slot, nhưng lại khiến cho các cửa sổ sau bị vô hiệu hóa signal/ slot vì chỉ có một biến)
+
+//ta cần chú ý: ta nên hạn chế vc tạo các biến thực hiện cùng 1 chức năng. Ở bài này ta muốn là hiện ra cửa sổ vô tận và connect signal slot. ta có thể khai báo dialog ở mỗi hàm hiển thị nó ra, xong khi tắt thì xóa nó đi. Ta tạo ra class dialog riêng và tự cho signal slot là thực hiện vc này truyền vào biến student và lưu nó vào. Nhưng rõ ràng vc khai báo và xóa liên tục là ok nhưng bất tiện vl. Ta luôn phải ưu tiên Th dùng 1 biến nhưng mà tái sử dụng nh lần nếu biến đó k bị lẫn do làm cùng chức năng
+
+thứ tự thực tế:
+mở Ct sẽ hiển thị cửa sổ chính-> ấn add sẽ hiển thị dialog-> thêm thông tin vào dialog-> ấn ok thì list thêm 1 thành viên lưu thông tin đó-> ấn cancel thì dialog tắt đi và thông tin k đc lưu-> xong ta chọn thông tin ấn enter thì hiện dialog-> chỉnh sửa bên trong-> ấn ok thì thông tin đc cập nhật và tắt cửa sổ-> ấn cancel thì chỉ tắt và k cập nhật-> xong chọn 1 đối tượng ấn remove-> hiện mess box-> ấn ok thì remove khỏi lists-> ấn cancel thì k làm gì cả
+
+các cách đi từ tạo ít tối ưu đến k tối ưu:
+cua so chinh có vector sinh vien.
+TH1: cua so chinh k có dialog, dialog k có sv-> vô lý vì signal ấn ok của dialog sẽ quyết định lưu biến sv thao tác trong dialog mà dialog k có thì k gán đc-> có thể xử lý bằng cách cho hàm click ok phát 1 signal khác-> để trong cua so chinh bat signal đo của dialog nhưng tạo vô hạn cua so thì signal slot cua dialog trong cua so chính sẽ ngừng hoạt động nên k đc
+phân tích tiếp: Th2: cua so chinh k có dialog, dialog có sv. Cửa sổ chính k có dialog tức là mỗi lần hiển thị lại tạo mới, tức là phải có delete mỗi khi dùng xong, và signal slot buộc phải xử lý hết trong dialog vì cua so chính sẽ xóa khi hiện vô tận-> vc ta lưu sẽ xử lý trong dialog nên biến sv buộc phải lưu trong đó mà ấn ok thì lưu trong khi ok làm gì có đối số-> dialog buộc có sv(như đã cm Th1 sai vỡ mồm)-> nhưng dialog buộc có sv mà về sau lại bị delete thì k thể địa chỉ đc r-> gán copy
+=> nhược điểm cách này là tạo và xóa quá nhiều->xong lại còn gán copy.->sai
+
+phân tích các điều kiện ràng buộc để tìm hướng đi đúng nhất(bỏ tối ưu đi): 
+ta muôn dialog hiện ra vô tận, signal slot xử lý liên tục luôn mà đúng tính chất thuộc tính=> dialog thì 1 biến student và cua so chinh luu tập hợp vector student. Chỉ cần như v thì dù đi theo hướng nào thì ta cũng có thể xử lý đc hết, luôn có cách giải quyết tiếp nên ta chỉ cần chọn 1 hướng mà ta thấy dễ hơn, nhẹ hơn, nhanh hơn mà thôi. Ví dụ ta thử làm khác cái hướng dẫn đi cho nó new liên tục xem nào.
+
+Cụ thể cửa sô chính:
+biến vector
+ấn add thì tạo ra dialog mới, tạo ra 1 item mới và truyền item vào hàm khởi tạo dialog mới-> show cái dialog ra-> bắt signal connect nếu nó cancel thì list xóa cái item đi
+signal ấn remove thì list xóa item
+signal chọn item-> tạo dialog mới truyền item vào và gán vào dialog
+
+Cụ thể cua dialog:
+khởi tạo truyền vào cái student và gán đia chỉ cho nội dung của dialog.
+signal ấn ok thì gán địa chỉ luôn
+(=> điều đb qt là khi xóa biến class nó sẽ tự động xóa các thứ bên trong cho ta nhưng có 1 chút đặc biệt là nếu là biến ta truyền từ bên ngoài vào hàm khởi tạo sẽ k tự động bị xóa(ms biết)-> đó sẽ mở ra nh cách hơn)
+ấn cancel thì xóa cái dialog đi
+
+other:
+ấn ok mà chưa có tên thì bắt in tên

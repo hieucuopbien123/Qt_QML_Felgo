@@ -1,0 +1,73 @@
+-> Qt for android:
+Cách tải Qt-> vào trang tải-> chọn open source-> kéo dưới cùng-> download Qt installer. Kbh đc ấn nhầm vào try k là ăn cứt luôn, mất mẹ tài khoản free.
+
+Các ngôn ngữ lập trình mobile phổ biến là: Java và Kotlin(ra đời sau cải tiến java) phổ biến nhất cho Android; Objective-C và Swift lại chuyên dùng iOS. Bên cạnh đó Javascript là 1 ngôn ngữ đa nền tảng cũng đc dùng để phát triển ứng dụng mobile.
+
+NDK(Native Development Kit) là bộ công cụ giúp code C/C++ trong Android. Nhờ nó mà ta quản lý các hoạt động của thiết bị, truy cập vào các bộ phận vật lý của máy như cảm biến, màn hình cảm ứng. NDK được phát triển phục vụ cho các xử lý phức tạp cải thiện hiệu suất của CT như tăng tốc độ phần cứng, giảm độ trễ, sử dụng lại các thư viện được viết bằng C++ => Nếu k có các nhu cầu tăng tốc hay dùng C++ trong android thì NDK thg k phù hợp với developer sử dụng các API đc android SDK cung cấp.
+SDK(Software Development Kit) như ta đã biết cung các thư viện, template, tài liệu các thứ để phát triển ứng dụng qua 1 nền tảng nhất định. Có nhiều loại như SDK Android, SDK iOS, SDK Windows,..(đã học)
+JDK(Java Development Kit) cung môi trường phát triển ứng dụng viết bằng java(java là cho lập trình android đó). Khi dùng java phải tải các JDK phù hợp muốn dùng
+
+VD để dùng 1 ngôn ngữ nào đó cho lập trình android, ta có thể phải tải cả 3 bộ công cụ đó và apply vào IDE để code.
+
+3 kit ở trên đều có thể install bằng android studio, công cụ hỗ trợ lập trình android phổ biến nhất. Or ta có thể download commandline android tool để dùng command line install các package đó
+
+Ngoài ra, gradle là 1 công cụ tự động hóa hỗ trợ nhiều ngôn ngữ khác nhau. Việc tự động hóa quá trình build và quản lý các thư viện giúp tối ưu công đoạn biên dịch và đóng gói-> các tool đóng gói hiện đại ra đời và gradle là 1 trong các tool tốt và phổ biến nhất. Lập trình android thường sử dụng gradle. VD: Nó sẽ thực thi hết tất cả các task có thể và tổng hợp toàn bộ các lỗi gặp phải trong một lần đóng gói. Nhà phát triển sẽ không phải chờ đợi quá lâu để build và gặp lỗi, sửa lỗi và build lại,..(K dùng các phiên bản cũ của nó là Ant, Maven)
+JVM(Java Virtual Machine) là 1 máy ảo java dùng để thực thi các chương trình Java hay hiểu nôm na là trình thông dịch của Java. Nó cung cấp môi trường để code java có thể được thực thi. 
+
+Sau khi có SDK ta có thể xác định các version android ta muốn dùng với SDK platform của android đó và system image tùy từng loại(có 4 loại x86, x86_64, armv8a armv7) và còn chia theo các loại khác như Google Play, Google API,..
+Có SDK hết còn phải thiết lập AVD là đĩa ảo để chạy(or cắm điện thoại thật vào thì k cần AVD)
+Các phần mềm android truy cập mạng còn cần android-openssl
+=>Còn phải cài 1 đống tool theo yêu cầu nx.
+Tại sao lại cần android studio-> ta dùng android studio nhưng k dùng IDE của nó mà dùng SDK manager để tải các phiên bản SDK và các tool cần thiết thông qua nó. Khi đó tất cả các thứ ta cài SDK sẽ vô cùng 1 thư mục và ứng dụng nào dùng ta chỉ cần trỏ đến thư mục đó là xong. NDK cài xong cũng nhét vào thư mục SDK luôn. 
+->Tuy nhiên có những phần mềm k tự chạy các bộ công cụ đc, khi đó phải code nó trong IDE của android studio(SDL), cũng có những phần mềm có thể tự cài SDK,NDK,JDK đc mà k cần dùng android studio(Qt). Tuy nhiên bên cạnh các gói công cụ, có những thứ bắt buộc phải thông qua android studio mới cài đc như emulator accelerator(HAXM) nên cứ cài thông qua Android Studio.
+=>Điều quan trọng là phải đúng version nx, nhiều cái k cho chạy version mới nhất cơ
+
+Setup Qt for android step by step:
+Quy ước: ta sẽ dùng phiên bản chuẩn của Qt, k dùng phiên bản 6.2 vẫn đang fix ở thời điểm hiện tại.
+Ta k dùng emulator đĩa ảo mà dùng trực tiếp máy điện thoại của ta. Bởi vì đĩa ảo dùng rất lag, tốn bộ nhớ, chậm, dễ bị lỗi khi cài.
+Ta cần tải về các thứ cần dùng cho phiên bản điện thoại của ta và các thứ cần dùng cho phiên bản của Qt. Vì Qt nó chỉ chạy đc khi có đc phiên bản nhất định. Ông Android Studio cx chỉ hoạt động đc khi có 1 số phiên bản nhất định nx.
+Trước tiên tải VSC-> tải droid info về điện thoại để xác định được platform của SDK, instruction Sets, phiên bản android(của máy ta xiaomi là android 10, arm64-v8a, SDK platform 29)->trong SDK Platform tải về Android SDK Platform 29 và Google APIs ARM 64 v8a System Image(cái này có thể k có ở phiên bản android 10 ta có thể tìm ở các phiên bản khác, ưu tiên mới hơn)-> trong SDK Tools tải về tools cần cho Qt là 30.0.2(về sau chạy nó tự cài thêm 28.0.3 cần thiết)-> tải phiên bản ndk tương thích mà qt cần là 21.3.6528147-> tải Android SDK Command-line Tools(latest), Android SDK Platforms-Tools, Google USB Driver, Intel x86 Emulator Accelerator(HAXM installer)-> cắm điện thoại vào máy tính bật USB Debugging, install via USB và cả USB Debugging(Security settings)->build app and deploy app, bỏ qua lỗi.
+=>Nếu sử dụng openssl thì tự cài vào theo link trong qt. 
+Tức là ta cài sdk, ndk, jdk, các tools là thứ cần thiết cho qt. Sau đó xem điện thoại có system image và android bao nhiêu/SDK platform bao nhiêu thì tải về đúng 2 cái đó là chạy đc.
+NDK trong qt nó tự xác định 1 phiên bản tương thích với sdk và tự động xác định 4 gói kits mà ta kp làm thủ công. K dùng android emulator vì ta k dùng máy ảo
+Tuy nhiên vẫn sẽ có các lỗi khác trong quá trình build và deploy app mà ta chấp nhận ignore đi.
+
+Ở 1 số phiên bản android emulator, nó sẽ bị lỗi file vulkan-1.dll -> có thể tải emulator khác về r replace trong file SDK để sử dụng phiên bản khác tránh lỗi. Lỗi này là do file vulkan-1.dll ở phiên bản mới của window đã không còn tồn tại. Ta có thể tải về r nhét vào C:/Window/System32 để dùng. Sẽ tránh đc lỗi mapping new ns to old ns chính là lỗi này của emulator. Fix đc lỗi này thì tải android emulator về là vẫn dùng đc AVD nếu k sợ lag
+
+Felgo bộ công cụ tiện ích phát triển đa nền tảng native dựa trên Qt, dùng Felgo kết hợp với Qt sẽ cho ra app tốt hơn so với Qt thuần túy. Nó cho phép xây dựng 1 cơ sở mã duy nhất chạy trên cả Android và iOS. Giúp tốc độ cao hơn, tạo animation UI dễ hơn. Có hot reloading cho phép sửa và cập nhập ngay. Xem trực tiếp giao diện trên cả Android và iOS và cả desktop lẫn embeded-> sửa phát là sửa hết mà k phải thêm code cho từng loại. Đó là ứng dụng của V-play của Felgo.
+Ta sẽ dùng V-play như 1 plugin của Qt Creator.
+Tải về trong v-play.net-> install vào máy. Ta có thể tạo game or tạo app vì v-play xuất phát từ game community, nó cho phép ta dùng các ứng dụng animation của game vào tạo app nên ra hiệu ứng đẹp. Dùng Felgo kp là bỏ Qt mà là dùng nó như 1 cái hỗ trợ đè lên Qt mà thôi. 
+Nếu dùng Felgo thì tạo và deploy app như đúng r mà éo cần emulator hay máy thật luôn, build 1 phát cân mọi hệ điều hành(VD build qua cloud)
+Nếu tải riêng v-play thì nó sẽ tự cài Qt Creator 4.11 kèm với Qt 5.11 luôn. Nếu ta tải Felgo trên Qt Marketplace thì nó cài vào phiên bản Qt hiện tại. Khi dùng Felgo sẽ mặc định chỉ dùng qmake, k dùng CMake. Do nó chưa update lên Qt6 với CMake nên thời điểm này ta sẽ dùng riêng Felgo và Qt để tránh xung đột compiler này nọ. Sau này migrate lên Qt6 sau. live server sẽ thay thế cho emulator-> éo nhé, live server k cho compile file apk.
+
+Cây thư mục của qt là cây thư mục chung khi tạo app android:
+file android manifest lưu các thuộc tính app. file build gradle bảo ta build app ntn
+asset folder lưu mọi hình ảnh, video hay các thứ j đó hiển thị trong app.
+ios folder lưu các thuộc tính giống android manifest v
+macx lưu icon
+qml folder lưu config.json VD trong đó có version code, version name khi update app, các file khác thêm vào dự án như file js
+
+Felgo cx hỗ trợ trên real device. Tải trên máy QML Live Scripting by Felgo-> bật app và kết nối cùng wifi với máy tính chạy felgo.
+Nếu ta kết nối wifi với felgo trên android sẽ lỗi nhưng khả năng đó là lỗi về wifi ở phía client k specific kết nối. Nếu ta dùng iOS vẫn đc, or thiết bị wifi thứ 3 phát ra(thậm chí k cần có mạng, chỉ cần có điểm phát sóng) thì sẽ kết nối đc với app.
+Felgo cx cung các component và API mới bổ sung cho Qt.
+
+Nhưng Felgo live chỉ hoạt động với các app QtQuick của Felgo chứ các app cho desktop bth khác của qt sẽ k dùng cho đt đc 
+
+Điểm lợi của Felgo QML là dùng như js giúp tiết kiệm code rất nhiều khi ta thao tác các thứ phức tạp chỉ với vài dòng code. 
+Ta k cần lúc nào cx phải code từng dòng của UI khi thực hiện 1 cái gì đó mà cơ chế property bindings của nó sẽ tự động giữ cho thuộc tính đó luôn luôn up-to-date. Ví dụ ta gán text của input cho label thì sau đó 2 cái text đó sẽ dính vào nhau mãi mãi, text của input mà đổi thì label cx đổi chứ k cần phải dùng bất cứ cái gì phức tạp. Nhưng sẽ có vấn đề khi nhiều property bind cái property đó và các property lại bind với nhau có thể tạo ra vòng lặp vô tận khi cái này đổi khiến cái kia đổi, xong cái kia đổi lại khiến cái này đổi, xong 2 cái cùng đổi 1 cái khác.
+Nhưng đó chỉ là cái cơ bản mà qml cung cấp chỉ nên dùng cho các sự kiện đơn giản. Với các thứ phức tạp, nó sẽ dùng MVC và cơ chế tương tự như Flux và React Native. Trong Flux: tác động vào view, phát ra 1 action-> gửi đến dispatcher-> dispatcher xử lý tùy theo action đó là gì gửi cho store lưu cái đó-> store cập nhập lại view. Nhưng qml hơi khác đi 1 chút khi dispatcher nó k xử lý mà chỉ phân phối đúng cho cái store nào xử lý nó và lưu nó lại.
+Trong QML: sử dụng MVC với các thẻ ví dụ như Page chính là cả view và controller, ta phải làm vc đó. 
+Bh kế thừa flux thì mô hình của qml cơ bản sẽ là: tác động vào page->logic phát signal->data model xử lý signal(có thể kèm xử lý API)(subcribe signal bằng dispatcher của Connections và từ khóa on)->model đó cập nhập lại vào page(thông qua xử lý callback và đổi property)
+Các mô hình khác của QML đều phát triển từ cái mô hình này, VD có nhiều loại model khác nhau như UserModel, TodoModel chẳng hạn,..
+Tương tự flux, sẽ có 1 cái dispatcher. Ta có 1 cái logic phát ra hàng loạt cái signal, model sẽ bắt cái signal để xử lý thông qua Connections. Nhưng có vô số signal sẽ có vô số connection thì phải có cách để biết cái nào bắt cái nào. Ta phải làm 2 việc:
+1 là phải gán <id của connection>.target = logic để biết connections đó sẽ xử lý signal trong cái logic nào. Đây chính là tương tự như 1 dispatcher phân phối logic nào vào model nào=> phải hiểu cái luồng này của nó
+2 là thêm từ khóa on<tên signal>:{} để xử lý signal nào trong logic đó.
+
+Rút kinh nghiệm từ Qt: thật ra các hàm fetch axios.get hay HttpRequest của QML là khác nhau, vai trò của chúng đều là cung vào tối thiểu 1 url và method sẽ fetch API từ 1 remote host, tất cả đều có thể dùng tối thiểu là callback or promise. Tuy nhiên cần chú ý là nó vẫn là các hàm khác nhau, VD giá trị trả về lấy ra content json ta fetch sẽ phải dùng đến nhiều hàm khác, VD axios lấy body, fetch lấy bằng hàm json, HttpRequest lấy bằng .text => các thư viện khác cx sẽ có các cách lấy khác, ta phải xem bài lấy mẫu mới biết đc cách lấy dữ liệu ra
+
+Chỉ cần dùng felgo với kit desktop là đc r, dùng với android nó báo lỗi module not found nhưng vẫn chạy đc.
+
+
+-> Splash screen là 1 màn hình đặc biệt hiển thị đầu tiên khi mở ứng dụng, kiểu hiện logo ứng dụng ấy, nó chỉ hiển thị rất nhanh, dài lắm cx chỉ vài giây. Ta có thể tải or thiết kế splash screen của ta. Các app tạo bằng felgo nó sẽ mang splash screen của felgo. Nếu ta mua license key thì mới dùng đc splash screen của ta.
+=> ng ta thg dùng nó để lấp đầy khoảng loading ở đầu app, tranh thủ các thao tác background như download thông tin, đọc văn bản dài để khi splash screen xong là sẵn sàng sử dụng luôn.
+

@@ -1,0 +1,46 @@
+﻿Để tạo 1 Qt Application, ta cần có 1 cơ sở dữ liệu sử dụng ngôn ngữ SQL. Ở đây ta dùng 1 cơ sở dữ liệu với SQL Server quản lý bằng Microsoft SQL Server Management Studio. Chú ý SQL là 1 server gọi là database server chứ kp là csdl lưu dữ liệu database, csdl ở đây chỉ là cái bảng
+Coi SQL là CSDL, Qt là 1 Application tương tác TT vs ng dùng thì ta cần kết nối 2 cái đó lại vs nhau.
+Kết nối chỉ cần 3 TP: server name hay host name là tên cái server chứa cái CSDL của ta, đó là SQLEXPRESS khi ta tạo vs tên mặc định, ta cần truyền đường dẫn tới SQLEXPRESS đó, thg là LOCALHOST or tên máy DESKTOP-<>; driver là cái trình điều khiển giúp ta kết nối từ app sang database, là cái ở bên phía client chứ kp bên phía server. Nên dùng ODBC là driver của microsoft, trong Qt có rất nhiều driver và cũng có thể dùng ODBC là "QODBC", cho phép kết nối tới Microsoft SQL Server và các database khác tuân theo ODBC; dsn hay nguồn ODBC là nơi chứa thông tin về tên server, mật khẩu, tài khoản, driver(của máy tính có sẵn(client) kết nối vs SQL Server), trạng thái,...(có cái này ms specific cần kết nối tới database nào trong server chứ).
+(Trong 3 cái đó thì chỉ có cái DSN là cần tìm còn lại servername và driver cố định mnr)
+
+Thao tác trên Microsoft SQL Server Management Studio:
+Có 1 server mà ta dùng trên object explorer, trong đó có thư mục database chứa các database ta tạo bên trong, các database khác ta tạo cũng đều nằm trong cái server này. Solution là toàn bộ cái màn hình bao gồm các file,ta có thể tạo nh solution và thêm vào trong đó nhiều file,project. Nhưng nếu k cần thao tác với flie mà chỉ cần database thì k cần tạo solution làm gì mà dùng TT bằng cách connect cái object explorer cho database engine là xong.
+Để tạo 1 database ms=> new database. 
+Để thêm 1 table vào database->new table=>Ta có thể thêm vào 1 database nhiều table khác nhau.
+Ta có thể thao tác đồ họa trong microsoft studio nv or dùng querry, vì điểm mạnh của SQL là cung cấp các querry dễ dùng thao tác vs DB->new Querry->execute(F5). Để xem bảng ->edit top 200 rows
+Khi ta tạo bảng mới có column name là tên, datatype là kiểu biến=>nchar(10) là string vs 10 phần tử là max;BIT là đúng or sai. Allow Nulls là có cho phép đc để trống thông tin k hay bắt buộc ng dùng phải nhập
+ta có thể lưu cái querry và database thành file mới
+refresh lại mỗi khi querry để nó cập nhập
+
+Các lệnh cơ bản ngôn ngữ SQL:
+-- là comment
+USE <tên database>
+GO:chờ lệnh trên kết thúc r thực hiện tiếp
+CREATE TABLE <tên bảng>
+(
+    <tên> <kiểu>(<max sl ptu>) <NOT NULL>,....
+)
+SELECT <trường>,<>,... FROM <link đến bảng> =>from link ví dụ: [Test].[dbo].[Table1]  (dùng * là lấy mọi trường)
+INSERT INTO <link đến bảng> (<trường>,...) VALUES (<giá trị theo trường>,...)
+DELETE <link đến table> WHERE <truong>=<GT>
+ALTER TABLE <link tới bảng> (dùng khi cần thay đổi các thuộc tính của table->k thể đổi TT qua design)
+ADD PRIMARY KEY(<trường>)
+ALTER COLUMN <trường> <kiểu> NOT NULL
+(tạo bảng script Table as->select to-> new query window table để tạo query ms có form sẵn)
+(có ';' cuối hay k đều đc, sql nó kqtr; dùng [] kẹp các TP or bỏ đều đc; nếu nó là duy nhất thì viết mẹ tên bảng cx đc or viết địa chỉ tên bảng ngăn nhau bởi dấu chấm)=> chỉ cần nhớ string thì kẹp '' là đc
+
+Ta cx có thể tạo bảng kêt nối vs nhau thông qua cột k allow null cx đc:
+SELECT cot1, cot2,... cotn
+FROM bang1
+INNER JOIN bang2
+ON bang1.cot_chung = bang2.cot_chung;
+=>thao tác vs giao diện: view->add 2 table->connect(chú ý phải cùng kiểu dữ liệu khi kéo)->chọn các cột
+
+Để tìm các thông số dsn:
+tên server hiện ngay đầu, tên database là cái ta tạo ez, tên driver dùng trong OS kết nối vs SQL server trong control panel ODBC driver là các driver có trong máy. USID và PASS là tk và mk tùy vào lúc ta connect server-> nếu ta chọn authentication là window or sql server(nên chọn window nếu có thể) thì sẽ dùng tk và mk trên SQL Server or trên window nếu có.
+
+Cách thao tác trên Qt(thao tác với querry):
+Có hai cách connect:(cần dsn để xác định liên kết vs Database nào/ cần server để biết connect server nào/ cần driver để thao tác đc vs database)
+C1(string connection): tạo biên QSqlDatabase là biến lưu trữ cái database(sẽ có dữ liệu sau khi connect) ta thêm driver cho nó với addDatabase(); sau đó ta gọi setConnectionOptions có tác dụng set chế độ kết nối(dùng trc khi open), nó tùy thuộc vào cái database mà ta sử dụng, muốn thuộc tính nào thì set thôi: vd dụ connect có chứng chỉ ssl,...;sau đó tạo connection string và setDatabaseName cho nó là ok-> open ra và dùng
+C2(tạo 1 dsn trên máy đến cái database cần connect và dùng): ta tạo 1 cái QSqlDatabase bth vs driver và set cho cái server bằng setHostName và setDatabaseName cho cái dsn và open để dùng=> dsn đó ta k dùng connection string nx mà ta tạo trong control panel trong UserDSN(chọn systemDSN có thể lỗi)-> tức là thay vì tạo trong Qt thì ta tạo trong máy 1 DSN nguồn open database connectivity kết nối đến cái SQL server sẵn r dùng cái tên dsn đó trên các ưng dụng cần kết noi là xong. Ta cần tự gõ cái tên Sql Server và 1 dsn chỉ đc kết nối vs 1 database nên cần setdefault database connection là database cần connect(khi có nh database mà k set sẽ lỗi)
+Sau đó ta tạo ra các dòng lệnh tạo querry với Qt để ứng dụng cho phép ng dùng tương tác vs CSDL

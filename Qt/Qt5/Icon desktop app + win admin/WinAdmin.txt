@@ -1,0 +1,27 @@
+Có các administrator application(phải có quyền admin mới mở đc) và cũng có các app bth. Ta cx có thể run as administrator cho app bth.
+
+UAC: user account control là sự quản lý các account trong window. Nó là 1 tính năng bảo mật giúp ngăn chặn những thay đổi trái phép với hệ điều hành. Ví dụ ta nhiễm virus nó làm thay đổi hệ thống thì UAC sẽ cản vc đó. Nó sẽ yêu cầu sự chấp thuận của quản trị viên nếu như muốn thực hiện thay đổi, sau đó yêu cầu nhập tài khoản mật khẩu nếu cần
+
+Ta có thể tạo ra administrative program trong window-> khi ấn sẽ prompt to UAC yêu cầu người dùng quyền admin. Để run được cái app đó thì qt creator cũng phải run as administrator.
+Để app có 1 icon và chạy dưới quyền admin: Ta cần 1 file .rc(code C++), 1 file .manifest(chạy XML), 1 file là .ico(là ảnh của ta)
+
+.ico là định dạng ảnh cho biểu tượng của window. Icon app của window kp chỉ là 1 ảnh bth mà được tổng hợp nhiều ảnh phức tạp tùy win32 or 64bit.
+Để có icon-> ta lấy 1 tấm ảnh bth r resize kích thước chuẩn 48x48 cho 1 bức ảnh icon window-> vào cmd run as administrator(nếu cần)
+->magick.exe convert <link tới file 48x48> <link tới file .ico muốn tạo> 
+
+Ta cần dùng 1 tool chỉnh sửa ảnh ImageMagick tải về, nhưng ta chỉ cần dùng commandline để tạo ảnh ico(Các pp tạo ảnh khác bằng paint hay adobe cx đc nhưng k áp dụng với qt). Bắt buộc dùng ImageMagick tạo icon cho window qt, các hệ điều hành khác sẽ dùng những cách làm khác xem trong tài liệu. Ví dụ để dùng trong paint->resize kích thước->save as->other format->256 color bitmap-> lưu đuôi .ico
+
+Để dùng icon trong app, ta tạo 1 file .rc và mở bằng editor-> thêm vào:
+#include <windows.h>
+IDI_ICON1	ICON	DISCARDABLE	"<tên file .ico>"      (cái DISCARDABLE chỉ là báo icon này discard đc thôi, k có cx đc)
+->Để file .rc và .ico vào thư mục chứa file .pro
+->vào file .pro, thêm: RC_FILE = <tên file .rc>-> build app là xong
+
+Tiếp theo để biến thành administrator app cần file .manifest, nếu muốn sẽ phải hiểu xml->ta dùng mẫu có sẵn, chỉ cần sửa
+name="<tên app phân cách thư mục bằng dấu chấm>" 
+type="<win32 or win64 tùy ý>"
+Thẻ <description> thêm mô tả về cái app
+Nhưng mấy cái đó kqtr, qtr là: level="requiredAdministrator" là cái làm cho app của ta thành administrative app.
+Để dùng file .manifest, thêm: CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "<tên file .manifest>" (vẫn phải RC_FILE = ".rc" trong file .pro)
+
+File đuôi .rc là file Resource Script định dạng text. Nó thường dùng lưu các thành phần như giao diện, ảnh, biểu tượng, cần dùng nếu lập trình cần sử dụng các thứ đó. Có phần mềm chuyên dụng để mở nhưng thông thường cứ text thì notepad mà quất.

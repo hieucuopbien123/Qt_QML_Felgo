@@ -1,0 +1,12 @@
+﻿synchronous multi-thread: T1/T2/T3/T4
+synchronous single-thread:T1T2T3T4
+asynchronous single-thread:T4T1T2T4T1T3
+asynchronou multi-thread:T4T1T2T4T1T3/T2T3T2T4/T1T2T3T4T1T2
+
+concurrency là một từ chỉ multi task đc thực hiện 1 lúc
+
+Lịch sử: Trong lịch sử phát triển máy tính, khối lượng công việc lớn nhất mà máy tính có thể xử lý trong một đơn vị thời gian được quyết định bởi tốc độ đồng hồ của CPU. Để tăng tốc CPU và thu nhỏ chip bán dẫn, người ta cố gắng nén một lượng lớn các đèn bán dẫn vào trong một diện tích nhỏ nhất. Tuy nhiên cuộc đua tăng tốc cho lõi CPU bị dừng lại do các giới hạn về phần cứng và nhiệt độ. Để tiếp tục tăng tốc cho CPU, người ta bắt đầu tìm một giải pháp khác để tăng tổng hiệu suất của CPU lên, đồng thời tăng hiệu suất tiêu thụ điện. Và giải pháp đó là đưa nhiều lõi hơn vào trong một CPU thay cho một lõi. Việc xử lý được đưa cho nhiều Core cùng xử lý, do đó tổng hiệu năng được tăng lên. Thoạt đầu, giải pháp nghe có vẻ rất hay nhưng vấn đề lại nằm ở phần mềm. Để tận dụng được lợi thế xử lý nhiều core trong các ứng dụng thì không phải là đơn giản. Trong quá khứ, để sử dụng được các core này, chúng ta phải xử lý việc khởi tạo và quản lý các thread này một cách thủ công. Việc này thực sự khó khăn với hầu hết các lập trình viên, bởi việc xác định được con số tối ưu của các thread trong từng hoàn cảnh dựa trên khối lượng tải hệ thống hiện thời , và phần cứng ở dưới là không hề đơn giản.
+Để xử lý vấn đề khó khăn này, cả iOS và OSX đề ra một cách tiếp cận khác cho việc xử lý đồng thời đó là: Thay vì phải tạo các threads một cách trực tiếp, các ứng dụng chỉ đơn giản là gửi các task vào các hàng đợi Queue. Còn việc khởi tạo các thread thế nào, bao nhiêu thread được đẩy cho hệ thống quyết định. Bằng cách để cho hệ thống quản lý các thread, các ứng dụng có thể đạt được một mức độ linh hoạt mà cách xử lý cũ không bao giờ đạt được. Đồng thời lập trình viên có được một mô hình lập trình đơn giản mà hiệu quả hơn.
+
+(=>do đó Qt để asynchronous ta dùng connect với Qt::QueuedConnection để nhét vào hàng đợi và Ct sẽ tính toán có bnh thread thực hiện công vc gì thì nó sẽ phân bổ hợp lý, cứ thread nào xong vc lại móc từ hàng đợi ra xử lý theo do máy tự quyết định. Lập trình viên kp tính toán số lượng thread này nọ, dùng luôn globalInstance và ta đã có multithread+ asynchronous=> kb có phải k nx??)
+

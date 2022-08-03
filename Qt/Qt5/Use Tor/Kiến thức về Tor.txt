@@ -1,0 +1,57 @@
+﻿VPN(Virtual Private Network-Mạng riêng ảo): nó kết nối máy tính hay thiết bị khác với Internet thông qua một máy tính khác như 1 mạng riêng. Thay vì kết nối trực tiếp, ta sẽ kết nối thông qua kết nối internet của một máy tính khác. Ngoài ra, VPN cũng mã hóa dữ liệu gửi đi, giúp bảo mật giữ liệu. Nó giúp ta kết nối internet an toàn và riêng tư, ẩn danh.
+
+Cơ chế: Khi ta truy cập internet để kết nối với 1 trang web, máy sẽ chuyển yêu cầu sang máy chủ của nhà cung cấp ISP r kết nối ta tới trang web. Trong kết nối VPN, ta sẽ trực tiếp kết nối với máy chủ VPN như thế là kết nối cục bộ. Nó như 1 tunnel mã hóa dữ liệu trước khi gửi đến ISP, do đó ISP k nhìn thấy được dữ liệu ta gửi đi đó là gì. Tất cả đường truyền dữ liệu mạng trong máy tính đều đc gửi qua 1 kết nối an toàn với VPN. 
+<máy tính gửi data đi>----đường truyền bảo mật VPN mã hóa-------ISP/Goverment/Hacker------Internet->cả chiều đi và về đều bảo mật
+Chứng chỉ ssl/tsl trong trang web cũng tương tự giúp ta bảo mật dữ liệu khi gửi đi và về thông qua internet.
+ISP k còn lấy được thông tin của ng dùng nx. Nó vẫn có cách khác ví dụ lấy thông qua cookies nếu ta k chặn
+
+Những lợi ích: Giúp fake ip chuẩn, duyệt web http thoải mái, truy cập các trang web bị chặn về địa lý, bỏ qua kiểm duyệt internet, duyệt wifi công cộng an toàn(khi k có VPN sẽ rất dễ để hack thông tin vd truy cập wifi công cộng xong đăng nhập email->có thể lấy đc dữ liệu login đó), giúp tải file, giúp tải file thông qua bittorrent.
+VPN sử dụng nh giao thức protocol để mã hóa dữ liệu. Nó cx k ghi lại lưu lượng truy cập internet.VPN có thể làm chậm kết nối internet khi máy chủ ở xa nhưng k đáng kể.
+Khi ta đặt vé hay mua gì, nhiều trang thương mại điện tử sẽ hiển thị mức giá khác nhau, nên người ta có thể kết nối với máy chủ ở quốc gia khác để tìm mức giá rẻ hơn.
+
+Torrent hay bitTorrent: là kiểu file(.torrent) chứa metadata về nơi dữ liệu bên trong được tìm thấy. Nó k chứa file cần tải mà chỉ là thông tin về các file đó vd: announce(URL), length(dung lượng), InfoFile,...
+Cơ chế: nó là cốt lõi của mạng file p2p phân tán. Nó cho client biết nơi tìm các file muốn tải. Ví dụ khi ta muốn tải 1 file về thông thường ta sẽ tìm nó trên internet(truy cập vào server) và ấn down xuống. Nhưng truyền tải file trên bitTorrent nó k lấy dữ liệu từ máy chủ mà nó lấy từ 1 người khác có cái file ta đang tìm kiếm, người đó sẽ chia sẻ cho mn cùng tải->giảm gánh nặng cho máy chủ khi file có dung lượng lớn, dễ quản lý, bất cứ ai cũng có thể tìm và tải. Như v thay vì ta truyền tải file bằng FTP hay HTTP thì bitTorrent cho ta 1 cách khác để làm điều đó. 
+Đầu tiên 1 người có file sẽ tiến hành "gieo hạt", những người khác sẽ vào và tải với tốc độ nhanh. Nó sẽ tự có cơ chế để giữ chân khách hàng ví dụ muốn tải về phải trả tiền cho người đăng lên hay trả tiền sẽ có tốc độ cao hơn. 
+Giao thức BitTorrent có thể thay thế cho máy chủ và cung cấp mạng lưới để truyền các file lớn. Nó cho phép người dùng cho phép người dùng tham gia vào một cộng đồng mạng để có thể upload/download (trao đổi tệp tin) với nhau.
+Ưu điểm: dễ dàng chia sẻ tài liệu giữa người với người, tải được nhiều thứ mà ta google k có or k còn mà người khác có bao gồm cả nội dung bất hợp pháp, nguy cơ virus,..
+Seed: hoạt động tải lên; Leech: hoạt động tải xuống; peer: tổng số seed là leech; swarm: tổng số peerer(seeder và leecher); tracker: server theo dõi swarm và điều phối hoạt động download của tất cả ng dùng-> thg download file có nhiều seeder
+Để dùng bitTorrent, cần cài 1 phần mềm là BitTorrent client miễn phí mã nguồn mở. Dùng 1 trình duyệt internet bất kỳ->duyệt trang web có danh sách tệp torrent->tải về->mở tệp đó bằng bittorrent client->bittorrent kết nối với tracker->tracker hiển thị các thành viên của mạng bittorrent để tải về cùng 1 tệp(swarm).
+BitTorrent cũng là 1 loại đồng tiền điện tử BTT ứng dụng được công nghệ blockchain. Nó tương tự với cơ chế trả tiền giữ chân người dùng bên trên. 
+
+->BitTorrent sử dụng là hợp pháp nhưng nếu tải xuống các nội dung phi pháp là phạm pháp. Các nhà mạng ISP thường quản lý vc đó và bóp băng thông khiên tốc độ tải xuống bị chậm-> ta có thể dùng bittorrent của VPN để tải nhanh hơn và ng dùng sẽ k bị ghi lại.
+
+VPN có bản trả phí và miễn phí(bị hạn chế). Miễn phí uy tín: ExpressVPN, ProtonVPN. Nó sẽ gia hạn tốc độ bao nhiêu dữ liệu dùng trong bao lâu như đăng ký gói mạng v. Tương thích nh thiết bị: điện thoại, MAC, máy tính,..
+Cách sử dụng VPN: kết nối mạng->tải VPN->cài phần mềm trên máy->chạy phần mềm(sign up)->bật VPN r duyệt web bth
+
+
+VPN và Tor là 2 công nghệ hoàn toàn khác nhau
+Tor(The Onion Router): phần mềm mã nguồn mở miễn phí. Chức năng: xóa dấu vết, địa chỉ IP xuất xứ của máy truy cập internet, các thông tin trao đổi qua tor được mã hóa và truyền qua nh máy chủ trung gian khác nhau(có hack đc máy trung gian cx k đọc đc dữ liệu vì bị mã hóa). Là 1 trong các phần mềm phổ biến nhất dùng để lướt deep web. 
+
+Cơ chế: Sử dụng proxy tình nguyện ẩn danh. Nó hoạt động thông qua nh máy chủ trung gian khác nhau và thay đổi liên tục cả máy chủ(cả đầu, cuối trong mạng tor), vd: lúc ở canada, lúc ở mỹ đổi liên tục. Do đó tốc độ truy cập mạng chậm vl.
+
+Cách dùng: ta tải tor về và dùng nó chung với các trình duyệt web khác, tốt nhất là firefox. Ta có thể dùng nó và địa chỉ của ta sẽ đổi sang nhiều ng khác trong mạng tor liên tục trên toàn thế giới, ta cx có thể tình nguyện chia sẻ đường truyền internet của mình cho mạng tor để ng khác nhảy qua mình.
+
+Tor Browse: nó ra hẳn 1 trình duyệt luôn để ta thay thế chrome or firefox, đương nhiên là bảo mật r. Khi ta gửi thông tin di, nó sẽ mã hóa trước khi đưa lên mạng(xóa tất cả thông tin như nguồn, tg, kích thước,.. có thể dùng để tìm hiểu về ng gửi). Tiếp theo nó mã hóa phần còn lại của thông tin qua nhiều máy chủ khác nhau và chuyển tiếp ngẫu nhiên. Trong quá trình đó nó cũng giải mã r lại mã hóa nh lần nx nên hacker rất khó tìm ra ta.
+
+Nếu chỉ như vậy thì nó cũng không khác gì VPN là mấy, thậm chí nó còn phức tạp hơn vì phải đi qua nhiều node. Nhưng công nghệ lại nằm ở chỗ này. Thay vì chuyển nguyên cả gói dữ liệu để chuyển qua các node đó thì Tor sử dụng một kỹ thuật gọi là “onion routing”. Kỹ thuật này có tác dụng giúp bóc tách dữ liệu của người dùng thành nhiều lớp khác nhau. Ví dụ khi truy cập thì dữ liệu đầy đủ của người dùng gửi đi sẽ bao gồm thông tin đia chỉ IP và địa chỉ đến của dữ liệu. Lúc này qua Tor nó sẽ được tách thành các lớp dạng: thông tin đia chỉ IP + node 1; thông tin node 1 + node 2 … thông tin node n + địa chỉ đến của dữ liệu. Như vậy cho dù ở bất kỳ node nào trong mạng cũng không có đầy đủ thông tin về toàn bộ dữ liệu của người dùng, nó chỉ có một phần không đầy đủ mà thôi.
+Do nó có nhiều lớp mã hóa giống như củ hành nhiều lớp vỏ nên được gọi là onion router. 
+
+Tor là 1 cổng vào deep web(chứa các trang web chưa đăng ký với các công cụ tìm kiếm, VD: silk road trang buôn bán ma túy trong dark web k thể tìm kiếm bằng gg).
+
+Ta có thể kết hợp tor với VPN:
+Vào tor qua VPN: máy->VPN->tor->internet=> nút mạng truy cập của Tor sẽ k biết đc địa chỉ Ip của ta(thêm 1 lớp vào củ hành thôi). ISP k biết ta dùng tor nhưng vẫn biết ta dùng VPN. Nó cx k hoàn toàn ẩn danh như là chỉ dùng mỗi tor(tor vẫn nguy hiểm ở nút thoát mạng của tor browse), và VPN vẫn biết IP thật của ta. Nhiều VPN hỗ trợ điều này
+Vào VPN qua Tor: máy->tor->VPN->internet=> phải cấu hình VPN để làm vc với trình duyệt tor(K nhiều VPN hỗ trợ: AirVPN,..)-> cách này thì an toàn hơn nhiều vì nhà VPN k có cách nào tìm đc IP ta dù vẫn thấy địa chỉ IP nút thoát mạng của trình duyệt tor(nhược điểm duy nhất của tor nhưng ISP, VPN biết điều này chả để làm gì)
+
+
+Tor: Dù dùng tor là ẩn danh tốt hơn VPN, truy cập 1 số trang web trên tor có thể làm lây nhiễm phần mềm nguy hiểm. Có thể dùng giao thức Tor để mã hóa và ẩn danh mọi lưu lượng truy cập, hoặc chỉ cần Tor browse nếu chỉ duyệt web.
+VPN: Tốc độ, tương thích khá tốt. Nếu k cần quá khủng về bảo mật chỉ cần dùng VPN.
+Proxy: Máy chủ proxy cx dùng bảo mật ẩn danh, có 2 loại proxy HTTP(vô web) và SOCKS(tiên tiến hơn HTTP vì xử lý mọi lưu lượng truy cập, k chỉ web). Nó chuyển hướng truy cập từ client tới máy chủ lưu trữ trang web ta muốn truy cập(đã biết), k mã hóa và chỉ đc với web. Nó cx ẩn ip, ví dụ ta ở vn mà kết nối với proxy ở Anh thì khi vào mạng sẽ có ip của máy chủ proxy ở Anh.
+
+Vidalia: là một phần mềm hỗ trợ trình duyệt tor ẩn danh. Nó giúp quản lý thôi.
+DuckDuckGo là công cụ tìm kiếm giống như google nhưng k theo dõi ng dùng, do đó k có quảng cáo cá nhân hay bộ lọc tìm kiếm,..Dùng nh trong tor.
+.onion: tên miền ảo cấp cao k hợp lệ trong DNS và chỉ truy cập khi kết nối tor.
+
+Ví dụ ta có thể dùng Tor như 1 proxy để truy cập internet-> khi đó ta dùng vidalia set cho nó cái proxy với host name, port, type, user và password nếu muốn. Sau đó ta có thể dùng external browser duyệt web ẩn như tor mà k cần dùng tor browser. Tuy nhiên điều này là không khuyến khích. Khi đó ta sẽ dùng SOCKS proxy trên cổng 9050 hơn là HTTP proxy.
+Tor browser listen cổng 9150 cố định.
+
+Dùng Tor trong Qt: Muốn làm v phải dùng vidalia để biến cái tor thành proxy rồi dùng QNetworkProxy. Chú ý dùng type default proxy chứ kp socks5proxy vì ta đang cài cái proxy cho network mặc định thành proxy của tor nhờ vidalia. Hàm setApplicationProxy sẽ khiến cho cái app hiện tại của ta-> mọi socket vào mạng dùng trong app đều phải đi qua cái proxy này(cổng giữa user và internet), khi đó QAccessNetworkManager sẽ vô mạng qua proxy này hay có IP của tor.

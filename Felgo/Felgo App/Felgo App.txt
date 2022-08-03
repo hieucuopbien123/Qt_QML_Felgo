@@ -1,0 +1,82 @@
+# App:
+-> Để thực sự tạo được 1 app thì cấu trúc app rất quan trọng, phân tích App PropertyCross:
+Cấu trúc 1 app bình thường trong Qt: giả sử ta có 1 app có 3 page, mỗi page có nhiều page con xử lý signal/slot liên quan đến nhau.
+
+App bắt đầu bằng 1 component App{}-> bên trong nó chỉnh theme, các thứ lq đến App, gọi đến component Item{}
+Bên trong Item{} gọi Model, Logic, Page chính. Bên trong Logic khai báo các signal
+Bên trong Model khai báo các slot xử lý các signal, xử lý dữ liệu, các hàm thao tác với dữ liệu, phát signal khi dữ liệu thay đổi, lấy dữ liệu từ server, lưu dữ liệu
+vào server, setting nếu dữ liệu ít,..
+Bên trong page chính có 1 Navigation, setting các thứ cho Page chính 
+Bên trong Navigation có hàng loạt các NavigationItem. Bên trong các NavigationItem có 1 NavigationStack. Bên trong NavigationStack có 1 Page.
+Bên trong Page đó là hiển thị các thứ của page đó, phát signal, xử lý signal nhận được bằng slot và có thể gọi đến các page con.
+Bên trong các Page con có thể gọi đến các page con khác, hiển thị, tái sử dụng,...
+
+App là single page thì app sẽ chỉ cần có 1 page bên trong, nếu muốn navbar thì dùng navigation stack và có 1 page bên trong là xong. Nhưng để dễ dàng mở rộng app, họ tuân theo cấu trúc: App có 1 Item-> Item có 1 Page-> Page có 1 navigationStack và cũng thg là navStack duy nhất của App-> Trong navigationStack đó muốn có bao nhiêu page cx đc-> Trong 1 page trong stack đó, có thể làm cái gì or gọi đến 1 page khác thì lại push vào page khác mà thôi. Các page con của con liên tiếp đều có thể dùng signal/slot or dữ liệu của cha or của model ta fetch/xử lý. Các page giống nhau thì viết cấu trúc sử dụng như nhau nhưng dùng biến ENUM để thay đổi kiểu dữ liệu sử dụng, các page trùng đó phải trùng cả page con của nó luôn. Nếu có sự khác biệt thì nên viết page khác or dùng biến bool cho cả con để chỉ định cha là 1 page ENUM khác thì con cx v nhưng cẩn thận tránh nhầm.
+
+-> Trong 1 page của 1 stack(mặc định là tạo như trên): ta có thể truy cập vào data trong model bất cứ lúc nào, gọi hàm của nó để chỉnh sửa nó or làm gì tùy ý. Dùng các biến của page cha truyền vào khi push đối số 2 nếu đây là page con. Phát bất cứ signal nào để thao tác với data do model bắt hoặc page nào khác bắt nhưng page khác bắt hiếm lắm vì data động nó nằm trong model hết r. Thao tác hiển thị bất cứ thứ gì trên nav bar page này or content, or thực hiện slot bắt sự kiện, or bắt sự kiện nào thì push thêm 1 page con nx vào, thao tác đủ thứ trong component page đó. Dùng các biến global. Truy cập các biến của các page cha của nó or con khác của các cha đó (với điều kiện khai báo binding property con sang cho cha thì sẽ dùng đc nó ở con khác).
+
+-> signal/slot trong felgo bị tách ra: logic chính là dispatcher bảo phát ra signal nào, model chính là global store lưu dữ liệu or fetch API mà mọi page đều dùng đc. Mô hình giống flux: tác động vào page cho logic phát signal-> model bắt signal thao tác với data-> model thao tác xong phát ra signal data bị đổi-> page bắt signal của model và thực hiện việc hiển thị. 
+Điểm lợi: công việc của người nào thì người đó thực hiện. Model lo việc xử lý mọi logic và lưu các dữ liệu cần thiết fetch or láy đc từ server. Page chỉ lo việc hiển thị, k xử lý logic. Tất cả mọi thứ là độc lập nhau, Vd 1 thứ thay đổi thì nó k bảo 1 thứ khác thay đổi mà nó chỉ đơn giản phát ra 1 signal, ông nào thích thay đổi thì bắt signal đó mà xử lý, hoàn toàn độc lập nhau; Property binding sẽ gán thuộc tính cái gì phụ thuộc vào cái gì, như kiểu anchors.centerIn:parent thì ta resize parent như thế nào thì nó vẫn ở tâm v. Tuy nhiên kiểu này chỉ nên dùng để gán giá trị và đảm bảo chỉ gán 1 lần nếu k thì lần bind sau sẽ đè lần bind trước. Các thứ khác thì dùng signal slot để tránh lỗi; Điểm lợi thứ 3 là model nó là 1 global xử lý các tác vụ dài theo kiểu asynchronouse như JS bởi vì nó cung được hàm callback bất đồng bộ
+của JS. Nếu 1 tác vụ bth(là nhanh) thì hiển nhiên nó thực hiện theo thứ tự. Còn 1 tác vụ như fetch API mất thời gian thì nó sẽ cho ta dùng các thứ khác như bth và khi nào thực hiện xong nó mới phát ra signal báo hiệu là đã xong và các page hiển thị muốn thay đổi sẽ thực hiện slot. K hề lo lắng về vc chờ hay bất cứ thứ gì khác. VD nếu ta ấn nút search liên tục 10 lần khiến cho nó fetch API 10 lần chẳng hạn thì nó cx làm 10 task đó độc lập theo cơ chế bất đồng bộ bth. Xong thì page vẫn bắt signal và thực hiện bth, k hề bị lag hay đơ các tính năng khác, k lo gì hết. Or thích thì ta có thể đang fetch API thì disable button đó, fetch xong thì mở lại nếu thích mà thực ra chả cần. Còn nếu đang fetch API và khi fetch xong thì page hiện tại sẽ bắt để hiện 1 page khác, nhưng trong lúc đang fetch ta lại thích ấn 1 button nào đó mở 1 page khác thì vào thời điểm nó fetch xong sẽ phát signal và page kia vân bắt bth sẽ đè lên page hiện tại. Đó hoàn toàn là những gì tính toán đc chứ k cần phải sợ xung đột hay gì, cứ async thực hiện xong phát signal là page thực hiện thôi. Tuy nhiên ở TH này ta hoàn toàn điều chỉnh đc muốn hiện hay k ví dụ khi mở page khác thì stack nó thêm page mới, ta có thể kiểm tra nếu stack có 2 page thì k hiện, 1 page thì hiện tùy ý
+
+Trong 1 page ta có thể làm gì, dùng dữ liệu gì, kết hợp với signal slot
+
+-> Để deploy app thì cần làm 2 thứ: tạo file apk có key-> tạo được thì điện thoại nào tải file apk đó đều chạy đc; gửi file apk đó lên CHPlay tài khoản dành cho developer. Để có tài khoản dành cho developer cần đóng phí là 25 đô. Phần này dành cho đội đầu ra lo, ta chỉ cần tạo được file apk là đc.
+Thông thường làm android trên android studio sẽ deploy dễ hơn còn qt thì phức tạp. 
+Khi dùng felgo, ta có 1 cách khác để deploy app cực nhanh, nó hỗ trợ cloud build cho phép ta build sang các loại hệ điều hành trực tuyến:
+Đảm bảo code chạy được ngon trên live server-> upload code lên 1 nhánh của github-> mở https://felgo.com/cloud-builds (phải có tài khoản github và felgo)-> new project-> gửi url của github, vị trí file pro nếu không ở trong thư mục đó luôn, chọn dạng clone(để là https, nếu dùng SSH thì copy khóa của cloud build vào trong github mới đc), chọn đúng nhánh, dùng các tùy chọn khác nếu muốn-> new build from git-> chọn các loại build hệ điều hành mong muốn-> chờ kết quả.
+=>Lỗi khi build FailToGetFullPathName của compileDebugAidl thực ra là do tên path name quá dài mà thôi. Cái này nó k cho nhận path name dài.
+Cách khác là build trong Qt Creator, nhưng cx chỉ ra được debug, để build được release thì cần Keystore:
+Ta có thể tạo key store bằng Qt creator-> project-> build settings-> build android APK-> KeyStore-> Create...
+1 ứng dụng sẽ cần 1 cái KeyStore và 1 cái Cerfiticate: Cái Cerfiticate là chứng chỉ chứa khóa công khai và thông tin về người sở hữu. KeyStore là thứ ta cần khi update ứng dụng đã tải lên và cần để bảo mật các thông tin trong app khi sử dung.
+Sau này ta có thể dùng nó để lưu các thông tin mong muốn. Ta cần sign cái app với cái key của ta, nó sẽ sinh ra 1 file.keystore, file này là thứ cần lưu lại để cập nhập về sau.
+
+-> Cách thu nhỏ app: trong android studio thì thu nhỏ app với proguard tool nhưng trong qt thì éo làm đc, ta chỉ có cách reduce các file asset để giảm dung lượng, compile ra file aab để gg play giảm dung lượng hộ, dùng android studio để build analyze cái file apk or aab đó, khi đó ta có thể xóa đi 1 vài lib k cần thiết nếu chắc chắn. Hiện h k có cách nào khác để reduce qt, sở dĩ kích thước nó lớn vì nó tự động thêm các lib mặc dù ta k dùng tới làm app phình to ra.
+
+Setting app: Khi dùng felgo nó đã tạo sẵn các file manifest và gradle.build r. Nếu k có thì trong project phải create template ra những file đó. Trong file manijest cần chỉnh sửa minimum required SDK và target SDK, version, name, icon, permission. Chỉnh sửa chúng cả trong file pro nx.
+
+Sau khi compile sẽ ra 1 file apk or aab trong thư mục, chỉ cần file đó để gửi lên gg play
+
+-> Các cách lấy dữ liệu từ 1 website: 
+1) Ta có thể crawl data từ website-> lưu vào chính cơ sở dữ liệu của ta-> dùng data từ cơ sở dữ liệu đó-> vc này có thể bị chặn bằng captcha
+2) Ta có thể dùng web service, chính là các giao thức HTTP qua API. Tuy nhiên để làm đc điều này cần phải biết API của website là gì, biết các giao thức GET POST gửi đi cái gì và nhận đc json hay xml như thế nào để sử dụng
+3) Nếu trang web mà có RSS thì có thể crawl dữ liệu RSS của trang web.
+4) Mò được API của 1 web nhờ vào việc bắt được các gói tin truyền đi và về => chưa đủ trình vì tab network nó éo đúng đâu
+
+Để dùng được webservice thì hoặc server anable CORS để client lấy dữ liệu từ server k bị chặn bởi CORS hoặc client setting sao cho lấy đc dữ liệu từ server(Trên các trình duyệt có các extension hỗ trọ điều đó)
+
+-> Các tư duy giao diện app thông thường: 
+Ví dụ cần login: Ta cho cái Navigation enabled = false => login page sẽ hiện ra đè lên trên-> sau khi nhập dữ liệu và ấn nút thì cho 1 biến logined = true lưu trong model và opacity của login page = 0 để nó biến mất => xong cái navigation sẽ có enabled = true hiện lại ra theo biến logined. Khi ấn nút logout-> ngay lập tức phát signal cho logined = false để opacity của loginPage lại hiện ra mà thôi
+=> tương tự áp dụng nó cho việc hiển thị lỗi bằng cách kết hợp enabled, visible, opacity: AppText có dữ liệu thì visible true, k có thì visible false và cho hiển thị cái AppText khác đè lên cái cũ báo lỗi. Nếu kết nối lại đc thì lại chỉnh visible ẩn cái này hiện cái kia
+
+-> Mỗi lần ta fetchAPI thì ta làm có 1 lần và lưu vào data model nên k phải chờ nhiều lần
+VD ta cần mỗi lần vào máy là 1 lần fetch API lại nhưng vẫn có các setting muốn lưu giữ cơ: Nếu data liên quan đến data model hay các dữ liệu setting page của app thì có thể dùng Storage và Setting. Nếu muốn xóa cái nào khi bật ứng dụng thì App Component.onCompleted ta xử lý luôn việc xóa Storage, Storage đó chắc chắn ở các Page thì ta phát signal xóa Storage ở logic và cho page đó bắt thôi. Tương tự với Settings nhưng setting ta set luôn trong Component đó. Đương nhiên là ta 
+toàn quyền kiểm soát xóa cái gì giữ cái gì nhưng những cái giữ nên ít thôi vì có thể nặng máy.
+=>Ứng dụng ví dụ 1 app chỉ fetch có 1 lần và làm việc với dữ liệu đó: ta cho fetch ngay khi App or Item duy nhất trong App onCompleted và model sẽ xử lý các signal fail do nó phát ra trong quá trình fetch điều khiển vc hiển thị cái gì
+
+VD cần thêm 1 tính năng hiển thị page or xử lý: quy trình-> làm gì cho phát signal-> logic phát signal->datamodel bắt signal(or nơi nào lưu cái dữ liệu cần hiển thị ở page mới đó thì cho nó bắt)-> cho nó thêm dữ liệu, thêm xong thì phát signal tiếp-> nơi cần hiển thị bắt signal đó và hiển thị ra -> nếu là page thì nên thông qua 1 Component => các data của datamodel có thể dùng TT trong mọi page nhé, nhưng nếu cần thêm tính năng khác truyền vào page thì cho làm đối số 2 của push và trong page phải khai báo lại
+
+-> WordPress API: VD trang lovehand ta gọi GET API các trang sau
+https://lovehands.vn/wp-json/wp/v2/ => ra các route ta có thể get đc
+https://lovehands.vn/wp-json/wp/v2/posts => ra các post, mặc định của wordpress là 10 posts 1 page
+https://lovehands.vn/wp-json/wp/v2/posts?page=2 => ra 10 post tiếp theo từ 10 đến post thứ 20 -> làm kiểu loading ấy
+https://lovehands.vn/wp-json/wp/v2/posts?per_page=99 => ra max là 99 posts luôn chứ k còn 10 post nx
+https://lovehands.vn/wp-json/wp/v2/posts/:id => ra 1 post cụ thể có id nào
+https://lovehands.vn/wp-json/wp/v2/posts?slug=cay-thong-dat => ra 1 post có slug là gì, slug là 1 cái giống tiêu đề nhưng dù sao ta cx chả kiểm soát đc
+https://lovehands.vn/wp-json/wp/v2/posts?categories=141&per_page=99 => max 99 posts có chuyên mục có id là 141. Vì các posts trong wordpress chia theo chuyên mục
+https://lovehands.vn/wp-json/wp/v2/categories => ra list các categories
+https://lovehands.vn/wp-json/wp/v2/categories?slug=giai-tri => ra categories có slug là giai-tri -> kp post nên k xem đc nội dung nhưng có thể lấy đc id của chuyên mục để dùng cho posts bên trên
+https://lovehands.vn/wp-json/wp/v2/categories/:id => ra categories có id là cái kia
+
+-> Các kiểu hiện thị với model view trong felgo cơ bản, bth là model-view-controller nhưng felgo là model-view-item với view chứa model và delegate(item): 
+View: ListPage, ListView, AppListView, Repeater, GridView, PathView
+Model: [], JsonListModel, ListModel
+Item(delegate): AppListItem, SwipeOptionsContainer{ SimpleRow }
+
+-> RapidAPI là 1 trang web cung cấp các chức năng api. VD ta muốn chuyển văn bản thành giọng nói có thể search text-to-speech api có sẵn và dùng luôn -> gửi dữ liệu đi xong nhận về file giọng nói chẳng hạn. Để dùng nhiều api yêu cầu api key or token ta phải vào trang web của họ để tìm hiểu cái đó. 
+
+-> AppText có fontSize, font.pointSize, font.pixelSize: fontSize là set kích thước font chữ k bị phụ thuộc vào device, nó tự ngầm sử dụng App::sp() r k cần dùng nx, mặc định của nó là sp(16). pixelSize sẽ phụ thuộc vào thiết bị và đè lên fontSize nếu set, độ phân giải màn hình to hay nhỏ sẽ làm kích thước text bị ảnh hưởng. pointSize là k phụ thuộc nhưng nó set theo điểm, kp pixel
+=> nch là dùng fontSize
+
+Felgo để đổi tên app, ta chỉnh sửa các thứ trong config và manifest và qtr nhất là trong android/res/values/strings.xml
+

@@ -1,0 +1,59 @@
+﻿Quy trình kiểm thử phần mềm có 4 mức độ: unit test(kiểm thử đơn vị), kiểm thử tích hợp(integration test), system test(kiểm thử hệ thống), acceptance test(kiểm thử chấp nhận). 
+
+Unit Test: 1 loại kiểm thử phần mềm có cơ chế là cô lập từng phần code ra thành từng phần là từng đơn vị nhỏ và kiểm tra tính chính xác của từng đơn vị nhỏ đó. Để làm nó, ta phải viết 1 chương trình unit test. Ta sẽ kiểm tra từng đơn vị nhỏ nhất như method, class,..
+
+Viết unit test tốt cho vc tin tưởng vào mã nguồn khi có sự thay đổi or bảo trì. Có thể tái sử dụng mã nguồn, giảm chi phí sửa lỗi, clean code. Thực tế vc viết unit test có thể lâu hơn cả vc viết ra cái method đó. Tuy nhiên, lợi ích lâu dài mà nó mang lại là vô cùng to lớn, vì ở các giai đoạn sau lỗi sẽ rất phức tạp và fix bằng niềm tin.
+
+Test case là 1 trường hợp thử nghiệm có thể có các thứ như mã test, tên, mục tiêu, điều kiện, input, output mong đợi,.. giúp cho vc kiểm thử.
+
+Test case k nên phụ thuộc vào nhau, 1 test case này sẽ k gọi đến 1 test case khác mà phải độc lập k phụ thuộc vào thứ tự kiểm thử. Khi có sự thay đổi, cần chạy lại các test case trước đó để đảm bảo k ảnh hưởng đến các test case đã pass trước đó. Luôn đảm bảo lỗi trong unit test đc fix trc khi chuyển sang giai đoạn kế. Kết quả của test case phải được miêu tả rõ ràng nhất có thể vì nó là đơn vị nhỏ nhất.
+
+Test suite: 1 TH những test case dùng cho mục đích nhất định.
+
+Trong các trình IDE, nó có thể cho ta các cách khác nhau để tạo và chạy unit test. 
+
+Thứ tự kiểm thử: test to pass trước là thực hiện kiểm tra vói những chức năng tối thiểu của phần mềm->test to fail sau là kiểm tra với những TH lắt léo, bí ẩn, cố gắng đẻ bắt lỗi.
+
+Có các mô hình khác nhau để phát triển theo hướng kiểm thử: 
+TDD(Test Driven Development): deverloper sẽ soạn thảo kịch bản kiểm thử->gõ 1 lượng code->kiểm tra và chỉnh sửa liên tục cho đến khi thành công->clean up code
+Agile Testing: phương thức test tuân theo quy tắc phát triển phần mêm agile. Nó thực hiện liên tục không tuân theo thứ tự.
+Waterfall: mô hình quản lý dự án phổ biến và dễ hiểu nhất hiện nay. Quản lý tuần tự và liên tiếp. Nó phần thành: giai đoạn yêu cầu->thiết kế->xây dựng->kiểm chứng(test)->triển khai(development)->bảo trì
+Behavior-Driven Development(BDD): trong TDD, ng tester đã vô dụng, mô hình BDD ra đời để tận dụng triệt để hơn. Nó cho tester hỗ trợ developer, họ tham gia vào quá trình xây dựng mã nguồn với vai trò phân tích và xây dựng hệ thống kịch bản kiểm thử.
+
+Khi thấy bug, thông thường ta phi vào code và sửa bug, nhưng nếu ta viết test trước thì sẽ đảm bảo k có lỗi tương tự. Tìm hiểu TDD:
+TDD: viết test fail(RED)->sửa code cho nó pass(Green)->loại bỏ code thừa, clean nó(blue).(Qtr 3 màu)
+RED: nghĩ về vài chức năng sẽ implement trong code và gọi trong test->test sẽ fail. Ta implement là sẽ chứng minh nó chạy đúng->green. TDD hướng tới API design khiến tập trung thỏa mãn nhu cầu người dùng đầu tiên chính là unit test của chúng ta. Viết test ta còn chưa biết sẽ implement như thế nào->càng độc lập vs implement càng tốt, đứng từ phía người dùng. Luôn bắt đầu với fail test và phải thấy nó red.
+Làm cách nào chọn test viết tiếp: vì k biết phải viết test hay imple cái nào trước->chọn viết những test case đơn giản dễ hiểu. Chọn test case mà ta hiểu nó nhất. Viết những test case những func hay dùng nhất. Đảm bảo message của failing test nói đúng những gì làm sai.
+GREEN: Chỉ cần làm mọi cách với 1 lượng code ít nhất tập trung vào code đang làm để pass qua cái test.
+Refactor là quá trình tái cấu trúc code mà k đổi tính năng. Tương tự refactor cả test nx.Trong test k đc viết logic, sau này sửa rất khó.
+Mọi code đều có unit test. Nếu code thỏa mãn test thì sẽ k còn đoạn code nào là vô dụng.=> nên dùng TDD ở mọi level.
+
+
+Đơn giản bth, ta có thể viết 1 class tester để test các hàm trong class ta tạo ra. Ta có thể tự biên tự diễn, nhưng đó là ý hiểu của các developer rằng mình muốn test cái hàm đó. Sau này, ng ta dùng hẳn cả 1 quy trình để test ứng dụng, và chúng ta lm v là thực hiện 1 unit test.
+
+Chạy test với Qt: Ta có thể viết 1 unit test cơ bản với qt. 
+Thủ công:Tạo file .h và file .cpp chứa cái hàm của ta, hàm đó là test case->include <QtTest>-> sau đó ta dùng hàm cần kiểm tra trong test case-> thêm QTEST_MAIN(tên class test) ở cuối cpp->vào file pro thêm QT+=testlib->run phát là xong.
+=>lưu ý: namespace QTest cung cho ta rất nhiều hàm và marco để phục vụ cho vc test như QVERIFY(condition), QCOMPARE(actual,expected),.. và =>QTEST_MAIN cx là marco. Để dùng ta include <QtTest> đã là có mọi module của Qt để test r. 
+marco QTEST_MAIN sẽ thay thế hàm main nên ở TH trên chỉ cần có file cpp và h mà k có hàm main()->thật ra bên trong marco này cũng chỉ gọi hàm main và rất nhiều hàm/marco kiểm tra, init,.. cuối cùng thì invoke cái method của ta và cleanup.
+Tuy nhiên cũng như nhiều IDE khác luôn hỗ trợ unit test. Để dùng trong Qt, tạo project auto test project->kết quả cũng sẽ cho tương tự nhưng lại chỉ tạo ra 1 file cpp với definition chung với declaration-> marco QTEST_APPLESS_MAIN lúc này thay thế QTEST_MAIN tương tự->nhưng ta lại phải include mocfile của cái class của ta.
+moc file(meta-object compiler): mỗi class có 1 moc file như v ta có thể generate ra trong qt bằng qt commandprompt->cd vào thư mục bin của mingw của qt->(copy dự án vào ổ C từ trc vì nó k vô đc ổ B)->moc.exe "<link file chứa class>" > "<link file.moc muốn tạo ra>"->sau đó ta dùng file.moc như thế nào tùy ý. Ta cx có thể tạo file.moc bằng makefile có rule là foo.o:foo.moc và foo.moc:...<tạo ra từ đâu>.
+moc file dùng cho các class kế thừa từ QObject.
+có thể k dùng file.moc mà dùng .cpp cx đc vd: mocfile.cpp. Tại sao lại dùng moc file->điểm lợi của nó khá dài và chưa đi sâu
+=>kết quả trả về sau khi chạy là kiểu liệt kê ra hàm nào PASS, hàm nào bị FAIL.
+
+Có thể thêm CONFIG += testcase vào pro sẽ dùng make check để run hoặc CONFIG += no_testcase_installs sẽ cản nó install vào TARGET
+Hay hơn là chạy test trên Qt cmd: <tên file exe> <tên hàm cần test> <variable>
+
+Các hàm khác của Qt cmd: qmake -project "<nội dung thêm vào file pro, vd: CONFIG+=release>" sẽ tự động thêm nội dung vào file pro
+
+Tự viết unit test theo như chuẩn thủ công: 
+ví dụ ta có hàm test case nhận đối số vào->ta có 10 TH(bao cả các TH đặc biệt như "", null,..) cần kiểm tra và nếu cho ra kq đúng thì hàm mới đc công nhận là đung: 
+Ta viết hàm gọi hàm test case và truyền vào cả 10 đối số, và kiểm tra như mong đợi thì passed, còn k như mong đợi thì in ra kiểu: failed on input=<input> expected <expected>, but got <testcase(input)>;
+
+Có framework TUG chuyên để test phần mềm qt, ví dụ khi dùng TUG để test 1 hàm nó sẽ tự nảy số liên tục và cho ra TH fail thay vì ta gõ từng TH. Cũng có những test automation framework để test tự động khi thay đổi code.
+
+Data Driven Test: Ví dụ khi test ta cứ kiểu gõ từng cái 1 xong Th nào fail thì in ra cái gì, Th nào tốt thì in ra cái gì(test cả TH lỗi thì in lỗi có chuẩn k) mà chỉ phụ thuộc vào data khác nhau. Như v ở PP này, ta k nên copy paste hay test từng cái 1 mà nên nhét tất cả vào 1 file or kiểu bảng table xong lưu lại các data đó trong hàm dưới dạng parameter và thay vào là xong.
+Ta có thể thực hiện Data Test Driven trong Qt bằng các marco khác của QTest chứ k nên QCOMPARE liên tục. 
+
+Benchmark(điểm chuẩn) nch là tiêu chí dùng để so sánh đánh giá hiệu suất giữa hai hay nh yếu tố. Trong các lĩnh vực thì ng ta có thể dùng nó để so sánh hiệu năng làm vc của 2 công ty. Xác định điểm chuẩn để so sánh từ đó tìm cách cải tiến và phát triển doanh thu. Tuy nhiên trong máy tính, kiểm chuẩn là thao tác một chương trình máy tính or các tác vụ nhằm đánh giá kết quả vận hành của một đối tượng->chạy các bài kiểm tra và thử nghiệm giới hạn chịu đựng.
+Kiểm chuẩn thg kết hợp vs vc đánh giá hiệu năng phần cứng máy tính như hiệu suất CPU. Trong phần mềm, ta có thể chạy với trình biên dịch or hệ quản trị cơ sở dữ liệu.

@@ -1,0 +1,41 @@
+Window Service(daemons) là 1 chương trình máy tính chạy ở nền mà k cần sự tác động từ ng dùng. Ta có thể cài đặt cho nó chạy thủ công hoặc bằng sự kiện. Khi ta bật máy thì cx có window service chạy ngầm và kết thúc khi ta tắt máy. 
+Nó thg dùng khi 1 ứng dụng cần chạy liên tục. Ng ta sẽ viết code cho nó chạy ở nền và k có sự tg tác of ng dùng. Ví dụ khách hàng yêu cầu 1 ứng dụng chạy ngầm để tổng hợp dữ liệu bán hàng từ các server chẳng hạn..
+
+Qt Solutions Archive là 1 component của Qt hỗ trợ nhiều thứ trong đó có window services. Nó đã lỗi thời nhiều năm và các class is deprecated nhưng nó vẫn chạy đc, chỉ là đã ngừng nâng cấp nhưng ta vẫn phải fix một số lỗi nếu có. Ta sẽ dùng nó để tạo window service và nhiều thứ khác.
+Nếu k dùng qt solution cx ok thôi nhưng tự nhiên phải học thêm và làm bnh thứ. Bên trong qtsolution có examples nx
+Tương tự ta có thể tải về và sử dụng nhiều widgets khác với qt mà k cần phải tạo lại từ đầu chỉ cần google, VD: pie menu for qt 5,..
+
+Tạo Window Service trong Qt với Qt Solution: Tải qt solution về-> mở qtsolution ra và fix các lỗi nếu có->include nó trong file pro để dùng trong code(tùy vào project dùng cái gì khác nhau mà ta phải include chuẩn)->dùng cj thì ta cần include src(tức source code) ở trong file pro và lại vào các file bên trong đó xem vị trí các thứ ở đấy nó include cái gì khác thì chỉnh đến đúng nơi
+->Cụ thể với service, ta vào file pro của ta: include tới file pri của qtservice(tốt nhất nên copy cái folder chứa nó vào cùng folder dự án cho tiện)->vào file pri đó thấy nó include common.pri thì ta lại phải chỉnh đường dẫn đó tới đúng nơi có common.pri
+(->sau khi add vào rồi thì nó như 1 phần code của ta->ta tiếp tục sử dụng như bth, phải hiểu là ta cần làm j, nó giúp ta cái gì cứ đọc document phần comment ở trong code r bắt chước example là đc). 
+->Rule of usage và class reference của service đều ở trên google (vd: docs.huihoo.com)->viết service
+
+DEFINES += QT_DEPRECATED_WARNINGS
+Trong Qt Creator ta có thể dùng cmd để truyền argc,argv bằng cách: Projects->RunSetting->dùng Command Line Arguments.
+
+Để 1 service chạy cần: install nó->start nó.
+Để install: 1> dùng sc command của cmd window(trong linux cx tương tự có command khác để cài service); 3> dùng 1 ứng dụng có QServiceController và dùng hàm install của nó để install cái service này; 3> dùng commandline của qt với đối số -install 
+
+Ta có thể dùng controller có sẵn trong phần example với command line là: -i "<link tới file exe của service>"
+Trong qt commandline có các default option command là -exec(chạy 1 service như 1 ct bth->để debug), -uninstall(uninstall service sau khi -install). Nếu ta k dùng command line mà trực tiếp chạy là sai.
+ta cx có thể chạy như 1 Ct bth trong cmd với: "<link tới file exe>" -e => dó là chạy để debug nên nó tự chạy vào start luôn và kết thúc luôn, chưa phải là 1 service
+
+Nếu ta dùng 2 cách trên thì cx ok nhưng có thể gặp lỗi k thể install. Ta có thể chắc chắn hơn bằng lệnh sc
+Upstart(tự động khởi động): là một phần mềm được thiết kế với tính linh động cao. Chúng giúp tự động khởi động các chương trình bị tắt đi một cách liên tục. Chúng giúp các chương trình luôn trong trạng thái sẵn sàng hoạt động. Cụ thể vs upstart ta có thể biến 1 file exe chạy liên tục tự động, nó là 1 kiểu thay thế cho vc khởi động các service trong máy tính, chạy các Ct tự động khi máy tính đc bật lên.
+Trong window ta có thể dùng upstart cho 1 file exec bằng lệnh sc: Nhưng trc hết bật cmd bằng right click+run as administrator(nếu k sẽ bị access denied)
+->Để install: sc create "<tên service>" binpath="<link tới file của service>" start=auto
+(start = auto sẽ tự chạy khi bật máy)
+-> sc stop <tên service>
+-> sc delete "<tên service>" ->phải stop trc r ms xóa nhé
+->Để chạy service nếu chưa chạy: net start "<tên service>" và: net start để hiển thị các service đang chạy trên máy
+(sc là viết tắt của service control - ta tạo ra 1 app controller cx chỉ là tương tự cái này thôi)
+
+Ta có thể install và chạy service với administrator cmd, sau đó dùng controller trong examples để điều khiển nó ví dụ in trạng thái, -v
+
+Để có thể start service thì k thể chạy mỗi file exe k, ta phải deploy nó thành app r mới dùng đc. Nếu k ta sẽ chỉ dùng đc TT để debug tìm lỗi mà thôi.
+
+Khi dùng service thì nó sẽ chạy ngầm, đồng nghĩa ta k thể thấy trên TaskManager, và ta vẫn có thể thao tác với nó thông qua controller=> nếu dùng nó kết hợp vs hooking thì có thể theo dõi máy tính của 1 người khác mà họ k phát hiện ra.
+
+Service là chạy ngầm, mà đã chạy ngầm thì sẽ k thể hiện ra bất cứ 1 thứ gì liên quan đến giao diện ng dùng. Ta chỉ có thể thao tác với console, do đó nếu muốn service hiện 1 message box thì k thể vì như v thành Ct exe bth mất r. Do đó chỉ nên dùng QCoreApplication là đc, k cần QApplication
+
+Do Qt đa nền tảng nên chỉ giả sử muốn chạy trên unix thì cx ok, code k khác chỉ là các thứ cài đặt thêm thư viện hay install,start service lệnh khác thôi, cứ search là ra hết.

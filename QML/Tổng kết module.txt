@@ -1,0 +1,63 @@
+QML:
+
+
+# Basic
+Tự tạo: Đơn giản ta tạo ra 1 file .qml rồi dùng file đó trong project, để sử dụng file .qml kia như 1 giao diện thôi.
+Thêm QT+=quick vô pro file
+Nhét file qml đó vào resource file và sử dụng
+Dùng: import QtQuick 2.12
+import QtQuick.Window 2.12 // or max hiện tại là 2.15
+ở trong file .qml và tạo ra các object bằng cú pháp: <tên object>{<thuộc tính>: "<giá trị>"}
+Trong main, đơn giản nhất là dùng QQmlApplicationEngine hàm load url của resource file để dùng giao diện qml
+
+Trong QML type các kiểu object nó cũng kế thừa nhau.
+Trong QtQuick cũng có file ui riêng->ta sẽ quét hết.
+Để dùng được trên điện thoại cần tải Kit dùng với hệ điều hành của điện thoại
+Mặc định: New->Empty Qt Quick Application cơ bản
+
+CTRL+SPACE
+Tạo thêm file qml: rightClick->addNew->Qt->QML File->dùng item trong nó với tên object là tên file
+
+Để dùng các widget ta đã biết->import QtQuick.Controls 2.1//phiên bản nào thích thì thêm->dùng các widget trong file qml đc
+
+qt qml nó đc phân cấp thành class và kế thừa và cx có signal slot nhưng cái đc là trong tài liệu chỉ có signal, k có slot, các signal đều đc chạy ngầm và tự động phát ra, còn ta có quyền gọi slot trong biến class r yêu cầu xử lý gì trong đó. Chưa can thiệp vào signal hay tự tạo signal slot nhé.
+
+CTRL+Scroll mouse trong designer để phóng to thu nhỏ vị trí nào chuột trỏ vào
+CTRL+I = RightClick + auto indent
+
+
+
+# Các bước dùng C++ function trong qml: 
+Tạo class C++ gọi trong hàm main-> tạo biến QScopedPointer cấp phát động class C++ đó
+-> gọi: engine.rootContext()->setContextProperty("<tên thuộc tính>",<tên biến>.data()); sau khi set file qml cho nó-> vào class tạo ra các hàm với Q_INVOKABLE-> trong file qml gọi <tên thuộc tính>.<tên hàm> (trong qml toàn tên thuộc tính.tên hàm như v)
+hàm rootContext sẽ lấy QQmlContext là root context của engine
+contextProperty là 1 thuộc tính của QQmlContext(qml có 1 context riêng)
+data() giống get() của QScopedPointer 
+=>Có nhiều cách connect và cách này là dùng class qt C++ như 1 thuộc tính của qml, tức là 1 biến v
+
+
+
+# Các loại hiển thị text cơ bản
+TextArea thuộc thư viện QtQuick.Controls
+=>chú ý là import QtQuick.Controls các phiên bản khác nhau sẽ cho kết quả khác. Ví dụ ta muốn textArea có border + scrollbar thì dùng phiên bản 1.3, các phiên bản cao hơn sẽ mất. Nên dùng phiên bản mới nhất và tìm cách xử lý.
+Phân biệt 5 loại: TextField, TextInput, TextEdit, TextArea, Text
+-TextInput thì y hệt LineEdit nhưng nó k có viền nên phải lồng ở ngoài 1 rectangle.
+-TextField cx là 1 dòng như TextInput nhưng có sẵn khung. Cả 2 có thể dùng để gõ password. 
+=> Cái TextInput nếu ta viết dài hơn cái rectangle nó sẽ tràn ra ngoài rất xấu-> nên thế hoàn toàn bằng TextField
+-Text là hiển thị 1 dòng formatted text, có thể set font hay cỡ chữ, hiển thị html.
+-TextArea hiển thị editable text nhiều dòng. Nó k có khung và scrollbar ở các phiên bản mới nhưng nếu dùng phiên bản cũ là 1.3 thì sẽ có tự khung và scrollbar nhưng rất xấu. Để dùng tốt ở phiên bản mới nhất thì phải cho vào trong 1 rectangle + scrollview. 
+-TextEdit y hệt như textArea thậm chí còn kém hơn. Nó cx k có viền và scrollbar
+=>nên dùng hoàn toàn textArea cmnl. Hiển thị multiline text như này k hiển thị đc richtext(html) nhưng vẫn hiển thị đc các \n\t\r... Nếu ta set width và height cho nó thì nó fix nếu k nó sẽ tự theo parent
+=>Có thể set thêm Flickable cho đoạn text để nó move đc khá đẹp mắt. Nhưng có thể xung đột với tính năng selectByMouse khi rê vào phần đã có chữ
+
+
+
+# QML ui form :
+Có các cửa sổ cần quan tâm là property(thuộc tính từng item; connection view(xử lý signal/slot), slot đôi khi phải gõ chay tốt nhất là tự làm hơn là ui form; text editor và form editor là phần code cho từng item; library là nơi chứa các component; navigator là move đến item nào và các cái vớ vẩn khác
+Lỗi lạc mất vị trí: click vào edit xong click lại vào design là tự focus vào item. Để chỉnh vị trí của các item, ta chỉ cần nhét vào trong cha ở navigator r dùng anchor. Nếu muốn số liệu resize theo cái gì thì viết thêm trong code là đc
+=> Thật ra cái ui form k có lỗi. Vấn đề là khi quyết định dùng ui form thì phải dùng ngay từ đầu tức add new 1 file ui.qml luôn chứ k đc viết tay chán chê r mới dùng qml ui form thì sẽ bị lỗi. Tốt nhất là dùng ui form thì phải quyết định ngay từ đầu.
+Với các file dù có bị lỗi hay k thì Qt Design Studio đều chạy đc nhưng nó chưa hỗ trợ dùng với felgo mà thôi.
+=> Trong felgo designer hay qt bth thì ta có thể dùng design với file .qml bth chứ k cần phải .ui 
+=> 1 số lỗi của felgo k hiển thị trên designer: bỏ component App đi vì nó k hiển thị trong designer, bỏ id của các component đi, muốn move vị trí component thì cut từ code chứ k drag drop khi component có sẵn r, thao tác chậm thôi khi làm những thao tác dài, chuyển sang editor ở bar bên trái xong chuyển lại tab design khi k hiển thị, để tránh bị lag dừng Qt Creator thì khi cut hay copy cái gì bằng code ta nên trở lại phần tab Edit để làm cho chắc, thay vì rê item vào hình ta rê vào trong cái navigator trước rồi chỉnh vị trí trên hình sau, khi tạo 1 page mới ở 1 file mới mở lên sẽ bị nhỏ-> ta chỉnh width height trong designer tăng lên r xóa width height trong file text editor là đc, tắt vplay trong lúc chỉnh sửa bằng designer cho đỡ lag
+Mỗi component ta tạo ra file riêng (nếu là thư mục khác thì phải import vào) thì nó sẽ xuất hiện trong tập hợp các component để ta dùng tùy ý ở nơi khác bằng cách kéo thả vào navigator
+

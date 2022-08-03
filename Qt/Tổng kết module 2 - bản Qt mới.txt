@@ -1,0 +1,56 @@
+Qt6:
+
+
+# Q_PROPERTY
+Qt6 ta tải về trong maintainance tool chỉ cần trình biên dịch mingw cho qt6 và Qt5 compatibility module là cái giúp tương thích với các dự án cũ. 
+Qt6 cho phép compile dùng build system là CMake. CMake và qmake là extension, 1 system open source cho phép quản lý quá trình build->đều tạo makefile. qmake là riêng cho qt, còn CMake thì chung hơn dùng cho nhiều dự án có ngôn ngữ khác, nếu ta dùng CMake sẽ thấy cây thư mục có sự khác biệt. qmake hiện đã ngừng phát triển.
+
+data binding cx chỉ là kỹ thuật để lưu biến vào thuộc tính nào đó và dùng thuộc tính đó ở những chỗ khác chứ k dùng trực tiếp biến, ta dùng điều này rất nhiều vì ít khi ta thủ công gán dữ liệu lắm. VD thao tác với SQL ta tạo 2 trường r lấy cả list item ra gán vào 2 trường đó và thao tác với tất cả luôn chứ chả ai gõ từng data vào cả. Q_PROPERTY là cơ chế sử dụng data binding và QML sẽ dùng Q_PROPERTY này để tương tác với class, kiểu thay mỗi tên thì tất cả đều bị thay đổi chứ kp cứ 1 biến mới thì phải đổi tất cả getter, setter,..
+Khi tạo biến tuân thủ convention là m_<tên biến private> thì ta có thể rightclick + add getter và setter để tạo ra hàm set get mặc định chuẩn. Khi sử dụng Q_PROPERTY ta nên tuân thủ đúng nguyên tắc đặt tên cho đẹp=> chú ý nếu tên của getter và setter trong Q_PROPERTY k đúng thì phải comment để sửa lại cho đúng vì nó tự đồng bộ. 
+Tạo biến đúng quy trình là m_<tên biến>-> rightClick-> create getter and setter function
+
+Phải thêm từng file vào file CMakeList.txt khi add new
+
+
+
+# QTextCodec
+QTextCodec là class giúp cho việc encode và decode sang nhiều kiểu string khác nhau, có rất rất nhiều kiểu mà nó hỗ trợ vì nếu làm ứng dụng liên quan đến encode thì buộc phải dùng nó. Nếu ta chỉ có nhu cầu chữ bth thì dùng có thể dùng luôn các hàm encode kiểu UTF-8 được tích hợp sẵn trong QString cx đc.
+Nhiều module của Qt 5 mà qt 6 bị thiếu có thể thêm bằng cách thêm Core5Compat vào file CMakeList.txt để sử dụng, VD: QLinkedList, QTextCodec,..
+
+-> Encode và Decode
+
+
+
+# Link OpenSSL or dll
+Thêm file dll vào qt cmake: cmake cung các hàm thao tác bên trong
+set(<tên> <link tới dir chứa dll>)
+include_directories(<link tới file include>)
+add_executable ...
+target_link_libraries(<tên project> ${<tên link tới dir có dll ban đầu>}/<link tiếp từ đây tới file dll> ${}/.dll (thêm nhiều lần nếu nhiều file dll) )
+=> đó là chung với mọi thư viện bên ngoài muốn add vào cmake thì đều cần: link tới file dll và link tới thư mục chứa file include
+=> ta phải chủ động dùng từ file đó trở đi, vd file include->openssl->file.h thì làm như trên phải dùng là #include <openssl/file.h> tính từ include như v
+Thêm nx là trên MacOS đuôi file shared lib là .dylib
+
+Thêm OpenSSL vào CMake: 
+C1: Dùng cách trên thủ công rất ok.
+
+C2: Trong CMake nó có sẵn biến trỏ đến đường dẫn của OpenSSL tự động vì ng ta thường dùng OpenSSL trong CMake mà. Nếu ta tải về k theo standard thì chỉ phải định nghĩa thêm biến OPENSSL_ROOT_DIR mà thôi:
+set(OPENSSL_ROOT_DIR <link tới thư mục chứa các folder lib,bin,include của OpenSSL>) 
+#set(OPENSSL_USE_STATIC_LIBS TRUE) #OpenSSL cung cả static(thư mục lib) và dynamic(mục bin)->muốn dùng static ở đây thì thêm vào như này
+
+include(FindOpenSSL) =>marco tự xác định của CMake. Nó tự xác định bin/lib và include trong OPENSSL_ROOT_DIR mà ta set
+=>có thể thay dòng trên bằng: 
+find_package(OpenSSL REQUIRED) => chỉ tự tìm các dll/lib trong OPENSSL_ROOT_DIR mà ta set
+include_directories(${OPENSSL_INCLUDE_DIR}) => OPENSSL_INCLUDE_DIR chỉ tự tìm thư mục include trong OPENSSL_ROOT_DIR mà ta set
+
+add_executable ...
+target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto) 
+=>or thay thế bằng: target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
+
+=>Sau học linked thư viện do ta tự tạo ra thì sẽ còn có cách khác nx
+
+
+
+# Other:
+Lắm lỗi vl, QProcess k hoạt động trong qt6
+

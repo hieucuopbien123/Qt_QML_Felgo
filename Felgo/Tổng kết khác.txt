@@ -1,0 +1,563 @@
+Các component thường dùng của felgo(k chơi qml của qt nx):
+App{
+  onInitTheme: {
+    Theme.navigationBar.backgroundColor = <>
+    Theme.colors.textColor = <>
+  }
+  settings.setValue(<>,<>)
+  settings.getValue(<>)
+  dpScale/spScale = <>
+  shutdownAppWithEscapeKeyEnabled = false/true
+  keyboardVisible  diameterInInches  heightInInches  keyboardHeight  licenseKey  screenHeight  portrait  
+  landscape  isOnline
+}
+Item{
+  id: item
+  property bool <>: HttpNetworkActivityIndicator.enabled
+  signal <tên signal>
+  <tên signal>()
+}
+item.focus = true/false
+item.forceActiveFocus()
+Page{
+  backgroundColor: Qt.rgba(,,,)
+  id: page
+  clip: true/false
+  title: ""
+  opacity: <number 0-1>
+  readonly property <type> <name>: dp(Theme.navigationBar.defaultBarItemPadding)
+  useSafeArea: false
+  rightBarItem: NavigationBarRow{
+    ActivityIndicatorBarItem{
+      visible: true/false
+      showItem: showItemAlways/showItemNever/showItemIfRoom
+      animating: true
+    }
+    IconButtonBarItem{
+      icon: IconType.heart/ circle/ home/ hearto/ list/ circleo/ heartbeat/ angellist/ adjust/ adn/ ambulance/ lifesaver/ question/ tablet/ aligncenter/ angledoubledown/ at/ gear/ btc/ youtubesquare/ bicycle/ apple/ thumbsup/ sharealt
+      title: ""
+      onClicked: <>
+      showItem: <>
+    }
+    property real <name>: dp(Theme.navigationBar.height)
+    SearchBar {
+      inputBackgroundColor: Theme.backgroundColor
+      barBackgroundColor: <>
+      showClearButton: false/true
+      iconRightPadding: <>
+      width: <>
+      textField.onEditingFinished: {
+        textField.displayText/text/focus/clear()
+      }
+      textField.onDisplayTextChanged: <>
+    }
+  }
+  BackgroundImage{
+    source: <>
+    fillMode: <>
+    clip: <>
+    z: -1
+    opacity: 0.7
+  }
+
+  if(page.navigationStack.currentPage == <>){}
+  page.navigationStack.depth
+  page.navigationStack.currentTitle
+  page.navigation.popAllExceptFirstAndPush/push(<component>,<options object>)
+  page.navigation.popAllExceptFirst(<component>,<options object>)
+  
+  Behavior on <thuộc tính> { NumberAnimation { duration: <số ms> } }
+}
+FlickablePage{
+  id: flickPage
+  flickable.contentHeight: <>
+  scrollIndicator.visible: true/false
+  QtObject{
+    id: <>
+    objectName: <>
+    property <> <>: <>
+  }
+}
+flickPage.flickable.contentY
+AppActivityIndicator{
+  animating: true/false
+  icon: <>
+  color: <>
+  animationDuration: <số>
+  iconSize: <>
+}
+Navigation{
+  id: navigation
+  enabled: true/false
+  NavigationItem{
+    title: <>
+    icon: <>
+    NavigationStack{
+      leftColumnIndex: <số>
+      splitView: tablet&&landscape
+      initialPage: <page>
+      navigation.currentIndex
+      navigation.currentNavigationItem.navigationStack.popAllExceptFirst()
+    }
+  }
+}
+Column{
+}
+Row{
+}
+AppText{
+  wrapMode: Text.WrapAtWordBoundaryOrAnyWhere/WrapAnyWhere/WordWrap
+  font.pixelSize: sp(<number>)
+  fontSize: <>
+  font.pointSize: <>
+  text: ""
+  color: Theme.secondaryTextColor
+  font.italic: true/false
+  horizontalAlignment: Qt.AlignHCenter
+  font.bold: true/false
+  font.family: <string>
+  font.underline: true/false
+  font.strikeout: true/false
+}
+AppTextField{
+  id: appTextField
+  showClearButton: true/false
+  placeholderText: ""
+  inputMethodHints: Qt.ImhDate/ImhDigitsOnly/ImhNoPredictiveText
+  onTextChanged: <>
+  onEditingFinished: <>
+  borderColor: Theme.tintColor/dividerColor
+  borderWidth: !Theme.isAndroid ? dp(2) : 0
+  echoMode: TextInput.Password/PasswordEchoOnEdit
+  textColor: <>
+  placeholderTextColor: <>
+  placeholderColor: <>
+  onTextEdited: <>
+  validator: RegExpValidator{
+    regExp: <>
+  }
+  Theme.isIos
+}
+appTextField.placeholderText
+AppButton{
+  id: button
+  wordWrap: true/false
+  text: <>
+  textColor: Theme.textColor
+  textColorPressed: <>
+  textSize: <>
+  onClicked: <>
+  opacity: <>
+  enabled: true/false
+  flat: true/false
+  fontBold: true/false
+  fontCapitalization: Font.SmallCaps/Capitalize/MixedCase/AllUpperCase/AllLowerCase
+  radius: dp(20)
+  iconLeft: <>
+  icon: <>
+  iconSize: <>
+  minimumWidth: <>
+  horizontalPadding: <>
+  verticalMargin: <>
+  backgroundColor: <>
+  backgroundColorPressed: <>
+  leftItem: <Component>{ }
+  Component.onCompleted: {
+    HttpNetworkActivityIndicator.activationDelay = 0
+  }
+  rippleEffect: false/true
+}
+button.pressed
+Component{
+  id: <>
+}
+Connections{
+  target: <>
+  on<tên signal>: <>
+}
+ListPage{
+  useSafeArea: <>
+  title: <>
+  section.property: "<field>"
+  emptyText.text: <>
+  model: JsonListModel{
+    id: jsonListModel
+    source: <object có các trường trong fields>
+    field: [<>,<>]
+    keyField: "<trường key>"
+  }
+  delegate: SwipeOptionsContainer{
+    id: container
+    SimpleRow{
+      id: row
+      text: <>
+      imageSource: <>
+      item: jsonListModel.get(index)
+      autoSizeImage: true/false
+      imageMaxSize: dp(40)
+      image.fillMode: Image.PreserveAspectCrop
+      image {
+        radius: <>
+      }
+      style: StyleSimpleRow{
+        showDisclosure: true/false
+        backgroundColor: "transparent"
+        detailTextColor: "darkgreen/limegreen"
+        selectedTextColor: <>
+      }
+      onSelected: {
+        navigationStack.popAllExceptFirstAndPush(<>,<>)
+      }
+    }
+
+    row.height/width/item
+    row.itemChanged()
+    leftOption: SwipeButton{
+      text: <>
+      height: <>
+      icon: <>
+      onClicked:{
+        container.hideOptions()
+      }
+    }
+    rightOption: IconButton{
+      selectedColor: <>
+      icon: <>
+      height: <>
+    }
+  }
+  container.hideOptions()
+
+  listView.footer: VisibilityRefreshHandler{
+    visible: true/false
+    onRefesh: <>
+  }
+  listView.getScrollPosition()
+}
+AppListItem {
+  text: <>
+  image: <>
+  imageSize: <>
+  onSelected: <>
+  showDisclosure: true/false
+}
+Flickable{
+  ScrollIndicator {
+    flickable: scroll
+  }
+}
+HttpRequest.get(<url>).then().catch()
+HttpRequest.post(<url>).set('Content-Type',''application/json).send(<data>).then().catch()
+Setting{
+}
+nativeUtils.displayMessageBox(<title>,<description>,<number button>)
+GameButton {
+  text: <>
+  onClick: <>
+}
+AppImage {
+  source: ""
+  fillMode: <>
+}
+RoundedImage {
+  width: <>
+  height: <>
+  radius: <>
+  source: <>
+  border.width: <>
+  border.color: <>
+}
+ColorOverlay {
+  anchors.fill: <image id>
+  color: <>
+  source: <image id>
+}
+AppListView {
+  model: <model>
+  delegate: <>
+  emptyView.children: [ ]
+}
+SwipeView {
+  id: swipeView
+  width: <>
+  height: <>
+  Item { }
+}
+PageIndicator {
+  count: swipeView.count
+  currentIndex: swipeView.currentIndex
+  anchor.bottom: <>
+  anchors.horizontalCenter: <>
+}
+Repeater{
+  enabled: <>//của Item nào cx có r
+  model: <số/model/array>
+  delegate: <>
+}
+ListModel{
+  id: listModel
+  ListElement{
+  }
+}
+listModel.append({jsobject})
+listModel.clear()
+listModel.get(index)
+listModel.insert(index,jsobject)
+listModel.move(from,to,number)
+listModel.remove(index,count)
+listModel.set(index,jsobject)
+GridLayout{
+  columns: <số>
+  columnSpacing: dp(<số>)
+  rowSpacing: <>
+  rows: <>
+  <ELement>{
+    Layout.topMargin: <>
+    Layout.bottomMargin: <>
+    Layout.columnSpan: 
+    Layout.alignment: Qt.AlignHCenter
+    Layout.fillWidth: true/false
+    Layout.preferredWidth: <>
+  }
+}
+Grid{
+  width: 
+  columns: 
+  spacing: dp(<số>)
+}
+Storage {
+  id: cache
+}
+cache.getValue(<key>,callback)
+cache.setValue(<key>,<value>)
+cache.clearAll()
+cache.clearValue(<key>)
+
+Timer{
+  id: timer
+  interval: <số>
+  repeat: true/false
+  onTriggered: <>
+  running: true/false
+}
+timer.start()
+timer.stop()
+timer.restart()
+
+AppCard{
+  id: card
+  width: <>
+  margin: <>
+  paper.radius: dp(2)
+  header: SimpleRow{ <> }
+  media: AppImage{ <> }
+  content: AppText{ <> }
+  actions: Row{ <> }
+  swipeEnabled: true/false
+}
+  card.cardSwipeArea
+AppCardSwipeArea {
+  id: swipedCard
+  rotationFactor: 0.1
+  onSwipedOut: <>
+  onSwipedOutCompleted: <>
+}
+swipeCard.swipeOut(<direction>)
+swipedCard.directions
+AppPaper {
+  width: <>
+  height: <>
+  radius: <>
+}
+Rectangle {
+  x: <>
+  y: <>
+  border.color: <>
+  rotation: <>
+  transformOrigin: Item.Center/TopRight
+  gradient: Gradient{
+    GradientStop{ position: 0.0; color: <> }
+    GradientStop{ position: 1.0; color: <> }
+  }
+}
+
+Tổng hợp các global thg dùng:
+Qt.btoa(<>)
+Qt.lighter(<color>,<số>)
+Qt.darker(<color>,<số>)
+Qt.size(<>,<>)
+Qt.point(<>,<>)
+Qt.rect(<>,<>,<>,<>)
+Qt.md5(<string>)
+Qt.quit()
+Qt.tint(<color>,<mã màu mức độ>)
+Qt.fontFamilies()
+Qt.locale()
+Qt.formatTime(<Date var>,"hh:mm:ss")
+Qt.formatDatetime(<Date var>,"dd.MM.yyyy hh:mm:ss")
+
+SoundEffect{
+  id: sound
+  muted: true
+  source: "<>.wav"
+}
+sound.play()
+
+PathView{
+  model: <>
+  delegate: Path{
+    startX: <>;
+    startY: <>;
+    PathLine{
+      x: <>;
+      y: <>;
+    }
+    PathQuad{
+      x: <>
+      y: <>
+      controlX: <>
+      controlY: <>
+    }
+  }
+}
+
+
+Components for game felgo, some QML basic components:
+GameWindow{
+  screenWidth: <>
+  screenHeight: <>
+  activeScene: <>
+  onSplashScreenFinished: <>
+  EntityManager{
+    id: entityManager
+    entityContainer: scene
+  }
+  Scene{
+    id: scene
+    width: <>
+    height: <>
+    scene.gameWindowAnchorItem
+    scene.gameWindowAnchorItem.horizontalCenter 
+    PhysicsWorld{
+      id: world
+      running: true/false
+      gravity.y: 9.81
+      debugDrawVisible: true/false
+      z: 1
+      updatesPerSecondPhysics: 30 
+      velocityIterations: 5
+      positionIterations: 5
+    }
+    entityManager.createEntityFromUrlWithProperties(Qt.resolveUrl("<>"),<object properties of entity>)
+    entityMmanager.removeEntitiesByFilter(["<>"])
+    world.pixelsPerMeter
+    world.bodyAt(<>,<>)
+    EntityBase{
+      entityId: "<>"
+      entityType: "<>"
+      anchors{
+        bottom:
+      }
+      transformOrigin: Item.TopLeft
+      BoxCollider{
+        bodyType: BodyStatic
+        friction: 0.1
+        restitution: 0
+        density: 0.1
+        fixture.onBeginContact: { }
+      }
+    }
+  }
+}
+SequentialAnimation{
+  id: seAnimation
+  NumberAnimation{
+    target: <>
+    property: "<>"
+    from: <>
+    to: <>
+    duration: <>
+  }
+}
+seAnimation.start()
+Timer{
+  id: timer
+  interval: <>
+  running: true/false
+  repeat: true/false
+  onTriggered: { }
+}
+timer.restart()
+utils.generateRandomValueBetween(<>,<>)
+MouseArea{
+  id: mouseArea
+  onPressed: { }
+}
+mouseArea.pressed
+SimpleButton{
+  text: ""
+  onClicked: {
+    settings.soundEnabled
+    settings.particlesEnabled
+  }
+}
+Component{
+  id: mouseJoint
+  MouseJoint{
+    maxForce: 100000
+    dampingRatio: 1
+    frequencyHz: 2
+  }
+}
+mouseJoint.createObject(world)
+mouseJoint.target
+mouseJoint.bodyB
+mouseJoint.destroy()
+Particle{
+  id: particleEffect
+  fileName: "<>"
+  positionType:  ParticleBase.Free
+  angleVariance: <>
+  blendFuncDestination: <>
+  blendFuncSource: 770
+  duration: 5
+  emitterType: ParticleBase.Gravity/Radius
+  finishColor: <>
+  finishColorAlpha: 0
+  finishColorVariance: 000000
+  finishColorVarianceAlpha: 0
+  finishParticleSize: 30
+  finishParticleSizeVariance: 10
+  gravity: "90.0, 180.0"
+  maxParticles: 20
+  maxRadius: 100
+  maxRadiusVariance: 0
+  minRadius: 0
+  minRadiusVariance: 0
+  particleLifespan: 2
+  particleLifespanVariance: 1
+  radialAccelVariance: 10
+  radialAcceleration: -30
+  rotatePerSecond: 0
+  rotatePerSecondVariance: 0
+  rotation: 0
+  rotationEnd: 0
+  rotationEndVariance: 0
+  rotationStart: 0
+  rotationStartVariance: 0
+  sourcePositionVariance: "5.0, 5.0"
+  speed: 10
+  speedVariance: 0
+  startColor: <>
+  startColorAlpha: 0.8,
+  startColorVariance" : "#000000"
+  startColorVarianceAlpha : 0
+  startParticleSize: 7
+  startParticleSizeVariance: 3
+  tangentialAccelVariance: 0
+  tangentialAcceleration: 0
+  textureFileName: "<particle>.png",
+  visible: true
+  x: 0
+}
+

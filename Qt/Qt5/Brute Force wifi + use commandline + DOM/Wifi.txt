@@ -1,0 +1,42 @@
+wifi k có tính năng capcha nên nhập mật khẩu sai thì có thể nhập lại được liên tục nên có thể bruteforce. Kp là do số lớn mà là thời gian chờ kết nối wifi quá lâu dẫn đến bruteforce là không khả thi, chưa kể pass có thể có cả chữ cả số nx. 
+Do đó các app hack wifi hoặc là chịu chờ trong vài ngày để tìm pass, hoặc là bruteforce các mật khẩu thông dụng, hoặc là có app wifi chùa do cộng đồng nhiều nơi chia sẻ mật khẩu vào 1 cơ sở dữ liệu chung chứ hiện h chưa có thuật toán nào đủ tốt để hack pass wifi cả.
+
+Có thiết bị blueway có khả năng bắt sóng wifi các sóng trong phạm vi vài trăm mét và khuếch đại wifi đó để dùng. Nó sẽ tự thử các password có thg dùng và cái nào vào đc thì lấy r tổng hợp lại ra mạng ta dùng với hy vọng trong vài trăm mét xung quanh có người dùng wifi với password thông thg.
+
+Các lệnh thao tác với wifi trên cmd: 
++)ping <địa chỉ truy cập> -t =>ping(Packet Internet Grouper) là lệnh kiểm tra kết nối tới 1 máy chủ cụ thể, nó ước lượng khoảng thời gian trễ để gửi gói cx như tỉ lệ các gói dữ liệu bị mất. Nó là 1 lệnh hữu dụng để đo độ trễ giữa hai thiết bị mạng. Nhiều trò chơi online hiển thị ping là độ trễ mạng cho game thủ. Ví dụ để kiểm tra máy tính A và B có kết nối được với nhau hay không thì trên máy B ta ping địa chỉ máy A hoặc ngc lại là đc. Nếu bị Request time out tức là kết nối bị chặn ở đâu đó. Để dừng ping ấn CTRL+C
++)netsh wlan show profiles -> hiển thị các mạng wifi đã kết nối
++)netsh wlan show profile name=<tên wifi> key=clear ->xem mật khẩu của wifi
++)netsh wlan delete profile name=<tên wifi> -> xóa wifi đã từng sử dụng  
++)netsh wlan set profileparameter name="name" connectionmode=auto -> connectionmode = manual là thủ công phải bật bằng tay
++)netsh wlan add profile filename=<link tới file xml> => ta có thể kết nối wifi bằng cmd với lệnh này. Mỗi wifi sẽ có 1 file xml riêng, trong đó có các thông tin bao gồm tên và password luôn. Điều đó đồng nghĩa với vc ta có thể tự tạo 1 file xml cho 1 wifi nhất định để kết nối or xuất file xml từ 1 wifi có sẵn
++)netsh wlan show wlanreport -> có thể xem báo cáo sử dụng wifi theo thời gian
++)netsh wlan export profile key=clear folder=<tên vị trí xuất xml, ví dụ C:/> ->xuất toàn bộ
+netsh wlan export profile name=<tên wifi> key=clear folder=<tên vị trí muốn đặt>
++)netsh wlan ->liệt kê lệnh
++)netsh interface show interface ->xem các wifi đang kết nối. Ta k thấy tên mà thấy cái interface, trong máy tính thông thường có 2 interface là Ethernet và Wi-Fi để kết nối.
+netsh interface show interface name=<tên interface> -> cụ thể 1 interface nào có kết nối.
++)netsh wlan connect ssid=<password> name=<tên>
++)netsh wlan disconnect
+=>Bởi vì trong Ct, ta có thể thực hiện lệnh thông qua commandline thông qua system("") nên học commandline mới quan trọng
+
++)timeout <số nguyên giây> ->thread của cmd sẽ dừng lại trong bnh giây, giúp update hệ thống khi thực hiện lệnh
+
+Trong qt, dùng sleep sẽ stop chương trình đơ luôn nên các lệnh sẽ dừng hoạt động, tức là nó coi sleep như 1 lệnh cụ thể và thực hiện lệnh đó nên k có thời gian cho các lệnh khác, còn dùng QTimer::singleShot thì sẽ chạy 1 cái gì độc lập sau 1 khoảng thời gian là bnh, kiểu setTimeout của js
+
+Lệnh system("") của C để thao tác với commandline ta có thể dùng nó trong Ct. Trong Qt cx có làm lại bằng class QProcess là class giao tiếp với các Ct bên ngoài cung nhiều hơn các hàm khác. Hàm start, waitForFinished, readAllStandardOutput. Tuy nhiên class QProcess theo thread của app khác với thread ở trong console nên cần chú ý k đc sử dụng ở TH này. 
+VD: khi ta dùng lệnh timeout 2 để chờ cho kết nối wifi được update trong cmd, thì QProcess nó éo chờ 2s mà cái lệnh waitForFinished của nó chỉ là để chạy được cái lệnh đó chứ kp chờ cho lệnh đó thực hiện xong. Chính vì v buộc dùng hàm system(); Điều đó làm ta xoay sở mãi khi dùng QProcess để kết nối wifi nhưng k thể check cho nó đến bh có kết nối mới thực hiện tiếp. exitCode() là trả về việc thực hiện nó thành công hay không tức là có gõ cái lệnh đó vào cmd ngon hay k chứ k quan tâm cmd chạy nó đc hay k.
+QProcess là coi việc gõ hàm vào cmd là 1 lệnh bth thực hiện từ trên xuống dưới, còn cmd thực hiện nó như thế nào k qt. VD: lệnh date cho phép ta thao tác với gui nhưng QProcess đơn giản chỉ bỏ qua nó. Cái thread cmd và QProcess(theo main thread của app) là hoàn toàn độc lập=> chỉ dùng QProcess cho các lệnh cmd không thao tác trực tiếp và độc lập về thread.
+(Hiểu cái này là xong hết mnr)
+->Ví dụ 1 Ct đang chạy bth, ta xen giữa vào nó 1 hàm system("") và 1 hàm bằng QProcess. Khi gặp hàm system, nó coi cả cái system và việc thực hiện bên trong nó là 1 thành phần của mainthread, phải thực hiện xong nó thì mới đi tiếp xuống dưới. Còn khi gặp hàm của QProcess thì nó coi việc gọi hàm đó là gõ vào và enter là xong hàm đó k cần biết cmd thực hiện nó lâu như thế nào. Nếu dùng waitForFinished thì nó chờ cho đến khi cái biến QProcess k cần dùng ở lệnh đó nx và xuất hiện stdout thì mới đi tiếp(có thể bên trong nó vẫn chưa thực hiện xong ví dụ như kết nối vào wifi, nhưng stdout cmd đã có là kết nối thành công r). Nếu k có waitForFinish có thể việc enter và gõ quá nhanh mà ra khỏi khối {} làm QProcess bị xóa trong khi cái lệnh thực hiện vẫn cần nó thì sẽ lỗi xóa biến trong khi vẫn cần dùng.=> cái QProcess chỉ dùng cho các lệnh tức thời k có thời gian chờ thôi.
+
+1 Ct bth sẽ k chạy đc cả console và gui cùng lúc. Nếu chỉ dùng console thì Ct của ta sẽ tự biến thành 1 cái cmd để thao tác. Còn nếu dùng thêm gui thì mỗi lần gọi hàm commandline với system nó sẽ tạo ra 1 cửa số cmd mới, thực hiện xong nó sẽ tắt cửa sổ đó đi. Đơn giản vì nó k thể dùng cùng gui và console nên mỗi lần chạy console nó hiện ra r tắt đi để thao tác tiếp với gui.
+
+Để tạo 1 app thao tác với wifi trong Qt, nó có archive riêng, ta chưa học vội. 
+Tạo 1 app bruteforce kết nối wifi bằng qt, để thao tác được phải dùng lệnh cmd:
+Tạo 1 file xml của wifi cần kết nối-> lấy dữ liệu id và password muốn kết nối r thế vào 3 vị trí trong file xml là có file xml để kết nối(dùng DOM)-> chú ý password ta cho nó biến đổi liên tục nên dùng backtracking vào ký tự với giả thiết pass là 8 chữ số-> dùng system kết nối vào wifi đó-> dùng hàm chờ timeout để cập nhập hệ thống-> kiểm tra đã kết nối thành công hay chưa. Do k có hàm riêng để kiểm tra máy tính có kết nối mạng hay k nên ta kiểm tra bằng lệnh cmd, kiểm tra xem có interface nào có kết nối không->viết vào 1 file r kiểm tra trong file đó có chữ "Connected" là ok (bất cứ lệnh nào có khả năng kiểm tra tình trạng mạng của máy tính đều ok, ta chỉ cần lấy dữ liệu đó ra r kiểm tra có từ nào biểu hiện vc đã kết nối xuất hiện là đc).
+
+Ngoài ra có nh cách check khác như request đến 1 trang web có byteavailable là có mạng or gọi hàm ping nếu ping ok thì đc nhưng cách kiểm tra chuẩn như trên là ok nhất.
+
+Chú ý thêm DOM có cả QTextNode là 1 child k có tagname.
+Trong C thuần túy cx đủ hàm để làm app như này k cần qt nhưng k thao tác đc giao diện.

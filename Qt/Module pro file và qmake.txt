@@ -1,0 +1,48 @@
+﻿# Profile và qmake:
+-> Basic:
+Other project->subdirs project: giúp cấu trúc các qmake project theo sơ đồ phả hệ. Mặc dù có nhiều project và có nhiều file main,.pro nhưng chỉ đc chạy 1 cái 1 lần-> tiện khi dùng nh nhiều project phục vụ cho 1 Ct thì nên gom chung vào 1 project lớn như v. 
+Khi tạo ra các project như v thì file pro sẽ có biến TEMPLATE = lib/subdirs/.. báo hiệu thuộc loại nào
+
+Hàm make là hàm của trình biên dịch mingw, phải cài mingw(gcc) r ms dùng nó đc
+trong qt thì nó cx chạy với cơ chế hàm make trong đó file pro sẽ dùng như makefile còn lệnh qmake tương tự như hàm make nhưng nó k tạo file exe luôn mà tạo ra makefile trc r ta dùng mingw đã cài trong qt để compile make file đo. Ta chạy nó trong qt commandprompt chứ kp trong terminal như của linux(qt làm lại các cái đó theo chuẩn riêng, có cú pháp riêng)
+Đầu tiên ta nhét file pro và các file .cpp,.h vào cùng 1 folder(như trong ubuntu)-> chạy hàm qmake <tên file pro> hàm này sẽ tạo ra Makefile và các thư mục debug,release,file stash cần thiết dể tạo ra file thực thi ->mingw32-make chính là hàm make chạy vào Makefile tạo ra từ .pro thực hiện các rule, tạo ra file thực thi.
+Do ta k cài mingw trên máy mà ta cài vào trong qt nên ta phải dùng mingw32-make như v. Thực chất hàm khi ta cài gcc vào ubuntu thì nó tạo ra file gọi là make.exe, và cái file này đc cài làm biến môi trường cho Ct do đó ta có thể dùng nó như 1 lệnh bất cứ lúc nào(nếu k là biến mt thì gọi link đến exe còn j). Còn khi ta cài mingw32 cho qt thì nó sẽ ở dạng file mingw32-make.exe nên phải gọi mingw32-make or mingw32-make.exe mới đc.(cài kèm qt nên k tìm thấy location of nó)->nó là biến MT
+=>ta k dùng đc hàm make trong commandPrompt vì nó k cài mingw-> nếu ta cài mingw thì ta sẽ specific đc cái file mingw32-make.exe-> ta vào trong control panel->advanced system setting->nhét cái thư mục chứa file exe đó vào trong biến môi trường của hệ điều hành->thế là dùng đc mingw32-make-> ta có thể chuyển nó thành make bằng lệnh copy <link đến file mingw32-make.exe> <link đến thư mục đó\make.exe>(=>lệnh này tạo ra file make.exe giống với mingw32-make.exe nhưng đổi tên để ta dùng make)
+Cx có các phần mềm hỗ trợ bổ sung hàm cho command line ví dụ Chocolately giúp dùng hàm make nhưng bản chất các ứng dụng đó cx chỉ là cài ứng dụng và thêm biến môi trường mà thôi
+
+Nếu ta dùng Visual Studio Code cho qt chẳng hạn và muốn dùng commandline thì tương tự: mở commandline của MSVC lên(file bat nào đó)->dùng qmake <pro>(mặc định của ứng dụng qt)-> tìm xem file mingw make exe của MSVC tên là gì thì gọi phát là xong(hình như là nmake)
+
+Ta có thể dùng mingw32-make clean or mingw32-make all nhưng k thấy kq.
+
+Thực chất biến môi trường có vai trò là giá trị đường dẫn sử dụng khi ta gõ lệnh trong commmand line của ứng dụng or của hệ điều hành tùy vào vc ta cài biến môi trường vào hệ điều hành or ứng dụng đó hay k. Ví dụ trong window cho ta các biến môi trường mặc định như %ProgramFiles%, %ProgramFiles(x86)%, %SystemDrive%, $windir$, %USERNAME%,%HOMEPATH% ta có thể tự thêm vào để dùng
+
+Nếu ta compile trong Qt thì nó cũng làm theo các bước tương tự, chỉ là bên trên ta làm thủ công
+Biến môi trường CONFIG+= là biến lưu các thiết lập. 
+VD: CONFIG+=c++11 console #là dùng C++11
+CONFIG+=release #compile ra theo debug hay release
+
+Biến MT TARGET trong file pro giống TARGET trong make file là tên app-> nếu ta build app với TARGET xong đổi TARGET và build lần nữa thì sẽ tạo ra 2 app mà app cũ k bị xóa(đổi TARGET thì hàm clean cái target nhưng tên mới nên file exe cũ k bị xóa)
+
+mingw là 1 phần mềm mã nguồn mở, 1 trình biên dịch->dùng lệnh command line của nó để chạy Ct thủ công theo ý ta thông qua makefile(thực chất dùng commandline cx chỉ là chạy file exe, file exe đó có thể là biến mt or cung cấp rõ đường link + options) or cài nó vào trong các IDE và các IDE đó tích hợp sẵn tính năng build và run(VD qt creator) thì sẽ mặc định thực hiện(bản chất cx chỉ gọi lệnh như ta gõ thủ công)
+
+qmake trong qt bị lỗi: extra characters after test expression->chắc là do dòng nào đó trong file k đúng format ví dụ thiếu '\'
+
+file pri bị include bởi file pro, dùng khi muốn tách ra viết riêng ta cứ viết vào file pri r include nó trong file pro
+bằng câu lệnh include(<link tới file pri từ file pro hiện tại>)
+
+TEMPLATE+=subdirs
+CONFIG+=ordered 
+SUBDIRS += Libs
+SUBDIRS += Applications
+SUBDIRS += Plugins
+-> ví dụ có nhiều subdirs và ta compile cả dự án thì nó sẽ compile theo thứ tự các subdirs ta add theo thứ tự vào project như trên
+
+$PWD(hay $$PWD dùng trong đường link) là print working directory tức in ra đường dẫn thư mục làm vc hiện tại
+$$quote(<thứ muôn đưa vào trong cặp "" thì nhét vào như này>)
+
+Trong file pro(makefile) cx copy đc file như lệnh trong cmd: copy <tên nguồn> <tên đích>. Còn trong makefile, ta biến nó thành 1 rule:
+<tên file cần copy ra>: 
+	cp -f <tên file cần copy> <tên file tạo ra>
+=>sau đó: make <tên file trước dấu :>
+(shell script là 1 ngôn ngữ rieng ta sẽ học sau)
+

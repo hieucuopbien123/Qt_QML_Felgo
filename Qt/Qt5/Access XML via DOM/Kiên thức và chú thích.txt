@@ -1,0 +1,26 @@
+﻿XML là ngôn ngữ đánh dấu mở rộng(Extensible Markup Language)-> dùng để mô tả nhiều loại dữ liệu khác nhau. 
+Mục đích chính của XML là đơn giản hóa việc chia sẻ dữ liệu giữa các platform và các hệ thống, đặc biệt là được kết nối với mạng Internet->có tác dụng rất lớn trong việc chia sẻ, trao đổi dữ liệu giữa các hệ thống.
+XML dùng cho dữ liệu có cấu trúc(khá giống HTML đều sử dụng các thẻ tag), 1 module miễn phí bản quyền, hỗ trợ tốt. Nó mô tả dữ liệu dưới dạng text nên hầu hét các phàn mềm đều đọc đc.
+-> 1 file xml như là 1 file pdf v, có trình chuyên đọc nó VD iTaxViewer(nó cx chỉ là text file nên đọc đc bằng notepad cx đc nhưng k chuẩn thôi)
+
+Sự khác nhau html và xml về mục đích sử dụng: 
+HTML: để hiển thị dữ liệu còn XML là để lưu trữ dữ liệu. Mặc dù chúng ta hoàn toàn có thể lưu trữ dữ liệu trong file HTML tuy nhiên cách làm này không được khuyến cáo.
+XMl phải định nghĩa cả tên thẻ cho những thẻ ta muốn k có sẵn
+
+<?xml version="1.0" encoding="UTF-8" ?> là thẻ declararion ở đầu mỗi file XML
+
+DOM(Document Object Model-Mô hình Đối tượng Tài liệu) là một giao diện lập trình ứng dụng (API). Thông thường, DOM có dạng một cây cấu trúc dữ liệu, được dùng để truy xuất các tài liệu dạng HTML và XML. Mô hình DOM độc lập với hệ điều hành và dựa theo kỹ thuật lập trình hướng đối tượng để mô tả tài liệu.
+Ban đầu, chưa có chuẩn thống nhất nên các thành phần trong một tài liệu HTML mô tả bằng các phiên bản khác nhau của DOM được hiển thị bởi các chương trình duyệt web thông qua JavaScript. Điều này buộc W3C phải đưa ra một loạt các mô tả kĩ thuật về tiêu chuẩn cho DOM để thống nhất mô hình này.
+DOM cung cấp cách thức để truy cập và thay đổi nội dung của các tài liệu HTML/XML. Ta có thể dùng DOM trong code Javascript để thực hiện các lệnh. Ở trong Qt ta cx có thể dùng DOM để thao tác với tài liệu XML 
+
+W3C(World Wide Web Consotirum) là tổ chức tiêu chuẩn quốc tế chính cho World Wide Web->họ đặt ra các tiêu chuẩn khi tạo 1 trang web và nhg ng làm web có thể theo tiêu chuẩn này hoặc k theo(lãnh đạo bởi Tim Berners-Lee-ng sáng lập giao thức http)
+Tiêu chuẩn W3C không tham gia vào tất cả các vai trò của diễn ra trên website  mà vai trò chính của nó chính là giúp các nhà thiết kế website định hướng xây dựng, phát triển tốt cho webiste của mình-> k cần đi sâu
+
+Mặc dù một tài liệu hay văn bản có cấu trúc chặt chẽ (well-structured document) luôn luôn có thể được mô hình hóa bằng một cấu trúc dạng cây, DOM không có giới hạn về cấu trúc dữ liệu của một tài liệu.
+
+XML trong Qt:
+XML chỉ có 1 thẻ root duy nhất và bên trong có thể có nhiều thẻ con
+thêm module xml vào file pro.
+file Xml có đuôi là .xml, ta đọc ghi file như bth
+
+

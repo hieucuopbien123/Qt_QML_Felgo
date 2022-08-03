@@ -1,0 +1,48 @@
+﻿Khái niệm Hook(móc): là 1 cơ chế dùng để chắn ngang các lời gọi hàm, sự kiện trước khi nó đến một ứng dụng. Từ đó có thể sửa đổi theo ý ta, gia tăng hành vi, thêm chức năng or đổi chức năng.
+
+Cụ thể:Có nhiều loại hook phân biệt dựa vào các sự kiện hay thông điệp mà hook procedure can thiệp vào. Hđh luôn duy trì một danh sách các hook procedure cho mỗi loại gọi là hook chain-> Trong window, khi có sự kiện nó sẽ chuyển thành message lưu vào hàng đợi r chuyển qua các ứng dụng cụ thể để xử lý->nó sẽ tìm trong hook chain->thưc hiện và lấy lại quyền điều khiển sau khi hook chain kết thúc. Tức khi 1 hook procedure trong hook chain thực hiện xong, nó sẽ chuyển quyền điều khiển cho hook procedure kế tiếp. Nó sẽ làm chậm CT nên chỉ cài khi cần thiết và loại bỏ khi hoàn tất công vc. 
+Hook chain như kiểu 1 con trỏ hàm trỏ đến các hook procedure. khi gọi vào thì cái hookprocedure1 dùng quyền điều khiển, xong cứ thế chuyển sang các cái hookprocedure2,3,.. Mỗi hook procedure có tác dụng chặn 1 loại sự kiện. 
+
+Windows quản lý các ứng dụng đang chạy thông qua cơ chế message. Khi một ứng dụng cần xử lý, nó sẽ truyền một message tới hdh. Windows nhận lấy message này, giải mã nó rồi chuyển yêu cầu thực hiện cho CPU, rồi nó nhận kết quả trả về cũng ở dạng message chuyển tới ứng dụng.
+Hook là cơ chế chặn bắt các thông điệp gởi từ bất kỳ ứng dụng nào đang thực thi gởi tới Windows hoặc từ Windows gởi trả về ứng dụng. Như vậy dùng kỹ thuật hook ta có thể thay đổi được các message này và như vậy bạn nắm toàn quyền điều khiển các ứng dụng mà không phải do bạn viết ra. VD: Windows Blind và các phần mềm tương tự nó là một dạng ứng dụng hook toàn hệ thống. Nó có thể sữa đổi tất cả giao diện của tất cả các control trong các ứng dụng khác, cũng như là thay đổi cách hành xử của các control trong ứng dụng.
+
+Ứng dụng: bắt và giả lập các thông điệp bàn phím chuột, ví dụ cung cấp chức năng HELP(F1) cho ứng dụng, xác định trạng thái ứng dụng đang rỗi sẽ làm gì đó, tạo chức năng debug, keylogger, autoplay của game online,..
+
+Các mô hình: Local Hook là bẫy sự kiện ngay trong tiến trình cài đặt; Remote Hook là bẫy sự kiện thuộc tiến trình cài đặt ứng dụng khác. Trong mô hình này lại tồn tại 2 kiểu khác là thread-specific bẫy sự kiện của một luồng cụ thể và system-wide bẫy sự kiện của mọi luồng trong tiến trình cài đặt của hệ thông.
+Tức là hook cục bộ là hook dành riêng cho một ứng dụng nào đó và khi thoát khỏi GUI ứng dụng đó thì mất tác dụng(ví dụ thu nhỏ cửa sổ). Hook toàn cục sẽ bắt người dùng làm gì trên màn hình máy tính or dùng các ứng dụng khác. Ví dụ ta tạo ra 1 hook notepad thì dùng global hook vì nó kp là ứng dụng của ta.
+
+Dùng Hooking trong Qt: cài window SDK(Software Development Kit) for window 10(có thể cài thông qua Visual Studio)->dùng nó trong Qt là xong. Nó cung các thứ:tool,header,lib,.. để ptr ứng dụng window. Ta cx hoàn toàn dùng nó trong các trình IDE khác thoải mái, dùng dựa vào ngôn ngữ C++. Liên kết đúng path
+
+API(Application Programming Interface) là một thứ cung phương thức, giao thức để kết nối với thư viện, ứng dụng khác. Cần hiểu bản thân nó kp là một thư viện và cũng kp là một ngôn ngữ lập trình. Nó có tác dụng liên kết, cái này dùng của cái kia. Tức nếu k có API thì một người sẽ phải làm hết mọi vc. Khi cần làm 1 dự án thì ta sẽ chia nhỏ ra và người này làm phần này, ng kia làm phần kia và API sẽ giúp họ liên kết lại như v. Như v, API cx chỉ là các hàm thủ tục thông thường đc viết trên những ngôn ngữ lập trình khác nhau. Những hàm đó cung cho ta chức năng truy xuất đến một tập các hàm hay dùng và từ đó trao đổi dữ liệu giữa các ứng dụng. Trong lập trình thì thôi rồi, a lot of API!!! Tuy nhiên k nên chỉ hiểu hẹp là 2 ứng dụng giao tiếp với nhau, chung hơn là nó có tác dụng liên kết mọi thứ.
+Phân loại: 
+API trên hđh: các phương thức giúp ltv tạo ra các phần mềm tương tác TT với hđh.
+Web API: API trong các hệ thống website giúp ng dùng kết nối, lấy dữ liệu, cập nhât,.. VD: ta bán hàng trên lazada cho cửa hàng của ta có 1000 sp thì ta k thể nhập liệu chay từng sp như những nhà bán lẻ. Lazada cung API để liên kết từ hệ thống sản phẩm của ta sang lazada và mọi thứ đồng bộ với nhau.
+API của thư viện, framework: giúp 1 Ct viết bằng ngôn ngữ này sử dụng thư viện viết bằng ngôn ngữ khác, VD: dùng PHP giao tiếp với C++.
+Vai trò liên kết như khớp nối: Vd ta có 1 chức năng muốn cung cho 1 phần mềm khác. Ta mở 1 API để tác giả của phần mềm kia truy cập vào chức năng của ta. Giả sử ta k thích tự dưng đóng API lại là ô kia k dùng đc nx luôn. 
+VD: API của google map cực khủng, hàng triệu trang web trên thế giới dùng API của google map để dùng thông tin trong gg map dùng cho trang web của họ,...
+
+SDK là một thứ chứa thư viện, sample code, debugging, documentation,.. để developer dùng trong ứng dụng của mình trên một nền tảng cụ thể. Có các bộ SDK riêng phổ biến như SDK Android, SDK IOS, SDK Windows, SDK VMware(điện toán đám mây), SDK Bắc Âu(bluetooth, k dây). SDK như là một bộ API hoàn chỉnh để dùng tạo ra ứng dụng nhưng nó cung nhiều hơn thế, nó hoàn chỉnh hơn. API chỉ là 1 phương thức để kết nối các phần mềm với nhau còn SDK là một bộ công cụ hoàn chỉnh dùng để phát triển phần mềm rồi. VD 1 SDK phiên bản đơn giản có thể chỉ là 1 API chứa tệp để thao tác với 1 ngôn ngữ chẳng hạn, nhưng nó cx hỗ trợ thêm trình gỡ lỗi,... 
+Windows SDK yêu cầu phải có .NET Framework SDK đi kèm để lập trình các phần mềm chuyên dụng. Cũng chứa code, thư viện để dùng thôi.
+
+Vc sử dụng hook nó chỉ giống lập trình win32 nhưng chỉ là một phần Lập trình win32 là một hướng riêng như Qt v. Ta chưa đi sâu vào win32 vội.
+
+Sử dụng hook trong window:tải SDK về và #include <windows.h>  using namespace std; 
+-LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam) =>(callback func-hàm hồi quy) cú pháp chung của mọi loại hook-hàm xử lý message. Khi có sự kiện thì sẽ gọi hookproc là hàm này. nCode sẽ xác định xử lý thông điệp, nếu nhỏ hơn 0 thì return CallNextHookEx luôn, nếu ngc lại thì sẽ xử lý tiếp trong hàm r ms gọi. Các param lại tùy vào loại hook thì sẽ lưu khác nhau.
+-SetWindowsHookEx->cài hook proc nhét vào hook chain
+trả về handle của hook nếu tcong, ngc lại là NULL. Giá trị này nhét vào UnhookWindowsHookEx nè. GetLastError để lấy số error.
+hàm này setup window hook truyền kiểu hook(ví dụ bàn phím hay chuột,..);2 là HOOKPROC: con trỏ trỏ tới CALL BACK func mà ta thực hiện khi chạy-nó trỏ tới hook procedure ở trong file dll hoặc ở ngay trong code hiện tại; HINSTANCE là handle instance của dll chứa hook proc, để là NULL nếu hook procedure ở trong process hiện tại; DWORD là identifier của thread mà hook proc kết hợp vs, thực chất là 32-bit unsigned integer(tức long unsigned), nếu là 0 thì mọi thread bị ảnh hưởng
+-CallNextHookEx->chuyển quyền điều khiến sang hook proc kế tiếp trong hook chain, nếu k dùng thì sẽ là chặn các hook proc còn lại trong chain.
+Trả về LRESULT: 1 là handle lấy từ hàm trên; các cái còn lại tương tự hàm callback.
+-UnhookWindowHookEx-> gỡ hook proc khỏi hook chain đc cài bởi SetWindowHookEx
+trả về BOOL 0 là thất bại va ngc lại, 1 là HHOOK là cái handle của hook sẽ bị loại khỏi hook chain lấy từ SetWindowsHookEx
+=>để cài 1 Ct hook cơ bản chỉ cần setup như v, chưa tính đến vc xử lý trong callback như thế nào. Hooking là kỹ thuật sử dụng cho nh ngôn ngữ C#,C++,.. Hooking chỉ là 1 phần trong lập trình win32 mà thôi.
+-Khi sử dụng thư viện dll truyền vào SetWindowHookEx thì phải lấy đc handle của nó truyền vào đối số 3. Hàm HMODULE LoadLibraryA(LPCSTR lpLibFileName); truyền vào link to file dll là lấy đc gán cho HINSTANCE(vs HMODULE là 1) 
+-BOOL FreeLibrary(HMODULE hLibModule);->giải phóng cái DLL mà nó đã LoadLibrary. Vc giải phóng này k giải phóng đc trong các process khác khi sử dụng cùng cái dll đó.
+-FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName);->FARPROC là kiểu lưu kết quả trả vè của hàm,như kiểu void*->hàm này sẽ truy xuất vào địa chỉ của hàm or biến trong DLL, 1 là handle của file dll nào, 2 là tên hàm hay biến ta truy cập.
+-HWND FindWindowA(LPCSTR lpClassName,LPCSTR lpWindowName);->HWND là handle của window, nó trả về handle của window có tên như v, k có thì NULL.
+-int GetWindowTextA(HWND hWnd,LPSTR lpString,int nMaxCount);->copy nội dung text của window title vào đệm->trả về length đọc đc, truyền vào 2 là bộ đệm nhận text, 3 là max number of đệm nhận vào.
+-DWORD GetWindowThreadProcessId(HWND hWnd,LPDWORD lpdwProcessId);->2 là con trỏ tới biến nhận process id. Nếu k NULL thì sẽ copy id của process vào biến này, NULL thì k làm gì; trả về identifier of thread mà tạo ra cái window
+
+pb:process id là cái tiến trình lớn đang chạy, thread id là các task mà CT đang chạy. Ct có thể chạy 1 process, bên trong có nhiều thread.
+
+Học tiếp lập trình win32 rồi mới học hook đc.

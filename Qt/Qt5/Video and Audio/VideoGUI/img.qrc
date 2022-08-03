@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>img/control_pause.png</file>
+        <file>img/control_play.png</file>
+        <file>img/control_stop.png</file>
+        <file>img/folder_page_white.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,97 @@
+Open SSL là 1 thư viện cho các ứng dụng bảo mật truyền thông. Nó cho phép triển khai các giao thức mạng như SSL và TLS. Thư viện gốc đc viết bằng C=> giúp tạo và quản lý các chứng thực số. Nó là library đc dùng gần như phổ biến nhất trong các Ct có cryptography r.
+
+SHA (Secure Hash Algorithms) or MD5 là hàm băm an toàn cho đầu vào và có đầu ra unique kích thước cố định
+
+Ta sẽ dùng Open SSL để thực hiện 2 kiểu mã hóa 1 chiều RSA và AES trong ứng dụng qt.
+
+RSA là thuật toán mã hóa công khai thường dùng để tạo key, tạo chữ ký điện tử-> nó sinh 1 cặp private và public.
+AES(Advanced Encryption Standard) là thuật toán mã hóa khối(block). Nó dùng key và key này luôn là private vì là mã hóa đối xứng. Nó còn dùng initialization vector(IV) or salt.
+IV là số ngẫu nhiên được sinh ra. Nó có tác dụng làm cho các đầu vào giống nhau cho đầu ra khác nhau, nó nằm ở thành phần đầu ra. Salt là 1 dãy ngẫu nhiên cũng có tác dụng tương tự nằm ở thành phần đầu vào. Ví dụ t dùng 1 file và 1 key để mã hóa sinh ra 1 decrypted file. Nếu t encrypt 10 lần tương tự sẽ cho ra cùng 1 kết quả. Điều này làm cho dễ dàng bị tấn công bẳng bruteforce khi người ta cố gắng đổi đầu vào cho đến khi có đầu ra tương ứng. Đó cũng là lý do ta không dùng hash để mã hóa.
+Mô tả: private key như là chìa khóa để mở ổ khóa là thông tin bị mã hóa bởi public key. Còn salt là cách phải lắc lư vặn vẹo đúng như thế nào mới mở được khóa, salt sẽ tác động vào cách để mã hóa và giải mã nó.
+Khi dùng hash để mã hóa tạo mật khẩu, họ thường thêm 1 giá trị salt vào cuối dãy băm là 1 dãy nào đó. Điều này giúp tránh bruteforce và giá trị băm thực bị ẩn đi vì chỉ 1 thay đổi nhỏ cũng làm giá trị băm biến đổi nhiều.
+
+Cơ chế:
+A: B ơi, mã hóa file đó và gửi cho t cho an toàn, đây là public key của t. A đã dùng thuật RSA để tạo ra 1 cặp key public và private, giữ privavte cho mình và gửi public đi.
+B: OK, t dùng thuật toán AES để sinh ra 1 cái key đối xứng và dùng key đối xứng đó mã hóa file của t. Sau đó dùng cái key public của A để mã hóa AES key->gửi cho A mã AES và file được mã hóa.
+A: lấy private key giải mã cái AES key(vì nó đc mã hóa bằng public key nên chỉ có private key của A mới giải mã được)-> A dùng AES đó giải mã file và đọc nội dung.
+Qtr truyền đợt 1 là 1 cái public key, đợt 2 là 1 AES key được mã hóa và file đã encrypted-> k thể biết nội dung file
+Tại sao lại phải như v? Bởi vì AES dùng để encrypt 1 lượng data lớn nên ta mới dùng để encrypt file. RSA là thuật toán tạo key. Cần bt rằng ta k dùng cái public để encrypt file rồi gửi file cho A là xong-> dùng đc thế thì chả cần AES làm gì nhưng public key k dùng để encrypt 1 lượng thông tin lớn như v.
+AES sẽ generate random bytes là khóa, chứ kp thuật toán này tạo ra 1 khóa duy nhất là một thuật toán cố định mà là 1 thuật toán để sinh mã 1 cách random, và dùng mã đó như 1 key để mã hóa và giải mã (thông qua salt).
+AES là chuẩn mã hóa dữ liệu rất phổ biến, dùng cho nhiều mục đích và được cả Cơ quan An ninh Quốc gia (National Security Agency) lớn nhất của Mỹ sử dụng để bảo vệ các dữ liệu tuyệt mật.
+
+Như v Open SSL cũng là một thư viện hỗ trợ cryptography, ta sẽ k dùng cái botan cũ nữa mà tải OpenSSL-> thêm 2 cái lib vào file pro như bth. 
+libcrypto lo các hàm mã hóa như RSA, AES
+libssl xử lý openssl library
+
+OpenSSL có cả command line để encrypt và decrypt.
+1 số component có thể tải TT thông qua Qt Maintainance nên có thể tải luôn VD OpenSSL đủ phiên bản, k cần phải tải riêng win32 làm gì-> nó lưu ở thư mục Tools
+
+Cách dùng với commandline RSA: 
+cd đến file openssl.exe ở trong thư mục bin của OpenSSL tải về
+->gõ lệnh: openssl.exe genrsa -out private.pem 2048
+<link tới file openssl.exe> <lệnh generate 1 file bằng mã hóa rsa> <> <link tới file đầu ra> <số bit>
+=>Đây là lệnh sinh private key bằng 2048 bit, đó là 1 file đuôi pem. File đuôi pem là định dạng text base64, là file thường dùng để chứng thực thông tin an toàn cho 1 website
+->gõ lệnh: openssl rsa -in private.pem -pubout > public.pem
+=> đây là lệnh tạo public key từ 1 cái key có sẵn. Public key ở TH này là file public.pem
+=>public key bao giờ cũng ngắn hơn private key vì private key mạnh hơn
+
+Ta sẽ tạo ra 1 app mã hóa thông tin và nhúng 2 key này vào để sử dụng, public mã hóa và dùng private để giải mã.
+Ta sẽ dùng các class lưu trong các file .h bên trong thư mục include của openssl nên phải INCLUDEPATH đến thư mục đó mới dùng đc
+
+Theo tiến trình thì ta sẽ cần các hàm: lấy cái private và public key->đơn giản là copy lấy nội dung của 2 file pem mà ta tạo; mã hóa bằng RSA public key, giải mã nó với RSA private key; mã hóa và giải mã bằng AES chỉ có 1 key; lấy randombyte, vì ta muốn cái salt là random để cùng 1 đầu vào cho đầu ra khác nhau tránh known attack; giải phóng key; Hàm khởi tạo vì ta dùng 1 thư viện bên thứ 3 nên lúc nào cx cần; hàm clean up cho thư viện thứ 3;
+
+Đương nhiên là ta sử dụng các hàm trong openSSL muốn hiểu thì phải học documentation rồi
++)Dùng OpenSSL với RSA
+-Khởi tạo-> Cleanup
+-Để lấy key: Lấy byteArray của cái key đó-> lấy BIO->lấy key là biến RSA từ BIO
+(biến bio là binary input output tức lấy từ bên ngoài)
+Ta có thể dùng private để encrypt r dùng public để giải mã cx ok nhưng điều quan trọng là họ phân biệt như thế để biết private là ta nên giữ cho mình còn public mới nên gửi cho mn
+Trong Ct do ta test ta mới dùng như v chứ tuyệt đối k đc để lộ cái private key trong app vì ng ta có thể truy ngược lại để tìm ra private key.
+-Để encrypt và decrypt văn bản bằng cặp key: ta chỉ cần gọi duy nhất 1 hàm RSA_public_encrypt ->có vai trò lấy từ 1 string này vào 1 string khác bằng public key RSA*=> 1 hàm này là xong nhưng ta cần lấy kích thước và chuyển sang const unsigned char* vì các hàm trong OpenSSL k nhận kiểu QByteArray của Qt mà nó đc dùng trên nhiều platform nên nó lấy raw data, ta phải dùng chuẩn. Biến char* lưu ký tự sau khi encrypt có cùng kích thc với key RSA*. (Thuật RSA sẽ mã hóa thành 1 string có cùng chiều dài với key, dù văn bản có lớn cỡ nào, đó là điều đặc biệt của thuật mã hóa, cần cấp phát đúng)
+-Để decrypt cx chỉ 1 hàm RSA_private_decrypt tương tự
+=>để dùng RSA ta cần phải có key, key này phải tuân thủ theo cặp private và public đc generate bằng RSA OpenSSL mà ta tạo bằng cmd từ trc. Mọi private key khi qua RSA OpenSSL đều cho ra 1 cái public key đó
+
+AES là thuật toán mã hóa mạnh(hơn so với các thuật toán khác), nó có nhiều mode và ta sẽ dùng 256 bit cipher blocking chaining mode->cơ chế là nó subtitute bytes trong khối dữ liệu làm trong 1 block rất phức tạp. 
++)Dùng OpenSSL với AES
+-Để mã hóa bằng AES: ta cần sinh ra 1 cái key và iv vector bằng hàm EVP_BytesToKey, hàm này nhận salt được random ngẫu nhiên và thuật toán EVP_aes_256_cbc và EVP_shal mà chúng ta sử dụng ->khởi tạo EVP_CIPHER_CTX sẽ lưu biến mã hóa, để mã hóa ta dùng 3 hàm EVP_EncryptInit_ex(), EVP_EncryptUpdate(), EVP_EncryptFinal() là xong. init khởi tạo thuật toán sử dụng với key và iv, update sẽ thực hiện mã hóa từ văn bản nào vào char* nào, final sẽ encrypt lượng data còn thừa là những khối block còn lại->kết quả cuối cùng là cái text mà ta bảo nó lưu vào trong update, ta thêm salt vào cho nó nx.
+-Để giải mã: lấy salt ta thêm ở bước cuối ra-> EVP_BytesToKey để lấy cái key và iv như lúc encrypt-> gọi 3 hàm EVP_DecryptInit_ex(), EVP_DecryptUpdate(), EVP_DecryptFinal_ex() ->lấy giá trị ra
+=>nhớ giải phóng khi dùng xong các con trỏ
+=>nch là OpenSSL có hàm encrypt decrypt hết mnr, ta chỉ cần giải quyết nhẹ nhàng: init->encrypt->lấy
+=>Vai trò: passphrase là mật khẩu để mở và được mã hóa bằng RSA, là thứ góp phần tạo key và iv. Nó bị lộ cx éo lấy đc thông tin vì có salt r, salt như thế nào do ta định nghĩa trong hàm, nếu hacker chỉ có file đã đc encrypt và passphrase thì cx chả giải đc. Tuy nhiên nếu ta dùng mặc định và hacker biết đc mặc định salt nó đc tạo như thế nào thì vẫn có thể truy ngược đc. passphrase ta thường random string cho khó mò
+salt: thứ làm cho passphrase giống nhau nhưng đầu ra khác nhau. Ta thắc mắc là như thế thì chính ta cx k giải mã đc vì salt là random ->k đúng vì ta thích để salt ở vị trí nào để lấy ra là do ta tùy ý quyết định, hacker k biết đc salt của ta nằm ở đâu và có số lượng là bnh.
+round: biến dùng cho hàm EVP_BytesToKey, hàm này bên trong sẽ đưa vào round vòng lặp, round càng lớn thì thực hiện càng lâu và máy chạy chậm hơn nhưng cái key và iv nó sinh ra càng phức tạp, càng đc bảo mật.
+iv: số ngẫu nhiên sinh cùng với key. Nó chính là output khác biệt mà ta nói.
+-Ta cần dùng RSA để encrypt AES vì AES phải là privavte all time.
+
+Phân biệt các kiểu cast: 
+- (type)object và type(object) là C-style cast, nó giống như ép kiểu ngầm định nhưng ta thực hiện nó không ngầm định mà thôi. Đương nhiên là kiểu cast nó phải chuẩn, ví dụ cast từ QObject sang 1 int thì bó tay r.
+- static_cast<type>(object) là kiểu cast đơn giản nhất thực hiện lúc compile time, nó dùng mạnh hơn kiểu cast trc. Nó có thể dùng để cast class với điều kiện kế thừa, k thể dùng cast sang 1 class khác biệt ht. 
+- dynamic_cast dùng cast xuyên class, lên or xuống khi kế thừa, nó sẽ cố tìm object để cast nếu có thể->vẫn có thể k cast đc khi class khác trả về std::bad_cast
+- const_cast chuyển từ 1 const sang 1 biến k là const, làm mất tc hằng số của biến
+- reinterpret_cast dùng rất nguy hiểm, nó cast trực tiếp từ 1 cái gì sang 1 cái khác-> nó copy TT
+
+Tất cả những gì ta làm ở trên là mô phỏng lại hoạt động mã hóa của openssl. Nó cung sẵn cho ta commandline để thao tác với file.
+Ta có thể dùng cmd để mã hóa bằng AES: openssl aes-256-cbc -salt -md sha1 -in file.txt -out file.enc -pass pass:passphrase
+Rồi giải mã bằng AES:                  openssl aes-256-cbc -d -salt -md sha1 -in file.enc -out file2.txt -pass pass:passphrase
+=>phải cùng password mới đc, ta coi nó chính là private key của AES. Khi dùng mặc định nó tạo salt y hệt như v. Bắt đầu bằng Salted__ và 8 bit sau chính là giá trị salt.
+Để dùng commandline openssl trong C++, ta dùng lệnh: system("<command>"); k dùng kiểu cộng string mà cố định luôn sẽ tương đương với vc gõ vào commandline như v
+Dùng cmd của win 10 éo truy cập đc ổ B mà lại bị hỏng mấy biến global dẫn đến ta phải vào tận file exe ms đc, nhưng dùng lệnh system sẽ ok hết các biến global
+
+Quy trình test của ta: A gửi B public key-> B random ra 1 giá trị password-> dùng public key RSA để encrypt cái password đó-> dùng password đó làm passphrase để dùng AES mã hóa cái nội dung cần gửi-> gửi lại cho A cái nội dung cần gửi và cái password đã mã hóa, ở TH này ta nhét chung vào 1 file và gửi cho A, password là 1 random bytes k thể đoán mò(-> Điều đó tức là cả A và B phải thống nhất 1 quy chuẩn chung là password tao để đầu file, ngay sau đó là nội dung, trong nội dung thì sẽ bắt đầu bằng Salted__<tên salt 8 bit><dữ liệu đc mã hóa> tức dùng chung 1 quy chuẩn encode và decode) ->A lấy private của mình giải mã password, dùng password đó giải mã nội dung file bằng AES
+
+đuôi file .enc là tệp file được mã hóa theo 1 quy chuẩn nhất định, phải có pass để giải mã ms xem đc.
+
+Doxygen là 1 công cụ giúp auto tạo ra file văn bản doc là kiểu tài liệu doxygen chú thích về code, việc ta dùng:
+/**
+*
+*
+**/ cx chính là vc tạo ra doxygen, nó phục vụ cho tính năng rê chuột và F1. Ta có thể tải engine doxygen về dùng.
+
+pem (Privacy Enhanced Mail) là định dạng file text là 1 định dạng chứng chỉ đc các ứng dụng hỗ trợ. Nội dung bên trong nó là base64 lưu chứng chỉ kỹ thuật số, ta dùng nó lưu key public và private.
+
+md(message digest algorthms)
+
+Về kích thước: 
+Với RSA: private dài hơn public key khi tạo key trong open ssl, private dùng 2048 bits để tạo như ý ta, dùng 2048 bits chứ kp độ dài file private.pem là 256 bytes nhé. Khi dùng RSA nó sinh ra biến RSA* dài 256 bytes tức 2048 bits, biến này mã hóa 1 văn bản có độ dài bất kỳ thành 1 văn bản không thể đọc có độ dài 256 bytes cố định.
+Với AES: passphrase có độ dài bất kỳ. salt có độ dài 8 bytes(mỗi byte 1 ký tự). Sinh ra key và iv có độ dài 32 bytes(k qtr). Từ cái key và cái iv, nó mã hóa 1 văn bản có độ dài bất kỳ bằng 1 văn bản có độ dài lớn hơn 1 chút, văn bản đầu vào càng dài thì đầu ra càng dài, ta k cần quan tâm cụ thể nó dài bao nhiêu vì sau 3 hàm encrypt và decrypt nó sẽ thay đổi nhiều. 
+Kích thước đầu vào là passphrase và văn bản: kích thước đầu ra nó ít nhất là có kích thước của 1 khối block chứa dữ liệu thừa dư + kích thước văn bản đầu vào->đó là bộ nhớ cần cấp phát, còn +- các thứ bên trong nx. 1 khối block có kích thước 16 bytes

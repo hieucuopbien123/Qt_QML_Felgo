@@ -1,0 +1,40 @@
+﻿App kết nối mạng:
+
+Cơ chế:
+tạo server->server lắng nghe trên một cổng
+->tạo client gửi thông tin cho server
+->server nhận thông tin(và kiểm tra)
+->server gửi cho client
+->client nhận thông tin và hiển thị ra
+
+Thao tác tay:
+bật server và ấn kết nối thì nó lắng nghe 
+bật client là có client
+ấn nút kết nối thì client kết nối với server và hiện ra qtr thành công hay bại
+gõ nội dung vào thanh nhỏ ấn nút gửi thì nội dung gửi cho server và server gửi cho tất cả các client khác
+nội dung 1 client gửi sẽ hiển thị trên text edit của mọi client khác
+
+Thành phần:
+1 Ct client, 1 Ct server
+
+Các công vc phía server:
+tạo 1 server
+signal ấn nút là kết nối
+signal nhận tin thì kiểm tra
+kiểm tra thành công thì gửi lại cho tất cả các socket=> để làm đc điều đó thì socket là dữ liệu của server-> dùng vector lưu socket v
+
+Các công vc phía client:
+Có 1 socket là đủ
+signal ấn nút là connect
+signal ấn nút là gửi dữ liệu tới server
+signal nhận dữ liệu thì kiểm tra và hiển thị
+
+Xử lý ngoài:
+Kiểm tra lỗi ở cả server và signal, lỗi kết nối hay bất cứ 1 cj
+hiển thị quá trình kết nối thành công hay thât bại
+khi ấn 1 nút thì disconnect-> đóng và xóa toàn bộ các biến con và mẹ
+
+=>Cụ thể server(qtr khai báo biến gì ở đâu->tạo những hàm nào):
+tạo biến con trỏ server là thành phần class khai báo trong hàm khởi tạo(vì chỉ cần 1 server)->sigal ấn nút thì listen+hiển thị là listening->signal bắt connection mới->signal connection mới thì nhét vào vector(v là dùng đc signal slot r)->signal nó nhận dữ liệu thì gọi hàm kiểm tra->kiểm tra đã gửi đủ chưa, đọc đc k->hàm kiểm tra thành công thì gọi hàm gửi client->gửi client tức là gửi vào tất cả các thành phần của vector là nextpendingconnection bằng hàm write-> signal ấn nút thì xóa-> kiểm tra lỗi.
+Cụ thể client:
+tạo biến con trỏ là tp of class trong hàm khởi tạo-> signal bấm nút thì kết nối với host-> cho hiện tt kết nối trên màn hình-> signal ấn gửi thì lấy nội dung trong line, socket write nó để gửi-> lấy signal khi nhận dữ liệu thì kiểm tra-> nếu đủ thì gọi hàm hiển thị lên màn hình-> signal ấn nút là ngắt kết nối và bị xóa-> kiểm tra lỗi kết nối

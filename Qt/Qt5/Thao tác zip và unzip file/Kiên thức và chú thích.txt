@@ -1,0 +1,48 @@
+zip file(.zip) là 1 archive, 1 file format lưu các file bị nén lại, giảm dung lượng. Cấu trúc file nén bên trong dùng các thuật toán phức tạp vl. Dùng WinRAR nén và giải nén file. Cx có nhiều phần mềm khác như 7-zip(đuôi .7z). Các phần mềm cx cho ta đặt mật khẩu cho file nên nhiều khi tải về giải nén nó yêu cầu mk ms đc, khi đặt mật khẩu nó dùng các pp mã hóa như AES-256,.. Trong Linux và Mac OS còn có file đuôi .tar.gz tương tự.
+
+PKZIP là 1 phần mềm máy tính giúp thao tác với file zip, nó là 1 trong những phần mềm đầu tiên khởi nguồn cho sự phổ biến của zip file.
+
+Dùng zip trong Qt: ta sẽ tạo 1 Ct Qt nén và giải nén bất cứ file nào.
+Qt hỗ trợ API với qCompress và qUncompressed nhưng chỉ thao tác với 1 file->k nén đc cả thư mục nên k dùng. Ta sẽ dùng QuaZIP.
+Qt API là những thứ mà Qt hỗ trợ, các hàm built-in đc hiểu là các hàm mà Qt cung cấp sẵn, và ta dùng API để liên kết nó vào code của ta để sử dụng. Khi ta dùng 1 thứ trong Qt mà kp là Qt API thì tức là thứ đó được 1 ng khác k làm vc trong Qt viết ra và ta dùng luôn cho tiện. Khi đó, những ng viết code đó sẽ k thể bảo trì code của họ khi Qt nâng cấp lên phiên bản mới, điều này khiến cho những code bên ngoài bị hỏng khi qt update. Do họ viết ra các hàm, class đó bằng các hàm, class của phiên bản cũ, đến phiên bản mới Qt có thể xóa or sửa các hàm đó đi. Khi viết code, đến bản cập nhật mới mà có những thay đổi lớn thì ta có thể tự bảo trì những dòng code cũ, khi làm các dự án lớn, ta đã xây xong exe rồi thì ứng dụng của ta sẽ k ảnh hưởng nhưng các công ty sẽ vẫn giữ lại source code để update,.. Do đó cần bảo trì liên tục. Bên cạnh đó cũng có các công ty khác kp của Qt là công ty thường xuyên làm các utilities ở bên thứ 3. Họ cũng chỉ như những ng cung cấp code thôi nhưng họ có bảo trì code nên ta có thể dùng code của họ như code của Qt chính thống v.
+
+Wrapper class là 1 class bao bọc class khác. 1 trong những kiểu class thường dùng trong lập trình. 
+Ví dụ: (Khi ta dùng thư viện của bên thứ ba, ta thường kiểu phải khai báo các hàm như init và try catch). Ta dùng code của thư viện bên thứ ba dẫn đến nếu họ bảo trì code có cái gì mới là ta phải vào sửa tùm lum mọi chỗ. Wrapper class ra đời sẽ khai báo những hàm cơ bản thường dùng của cái class ta dùng ở bên thứ ba đó(muốn chỉnh sửa thêm gì cũng đc) và dùng đc luôn các thao tác init cx đc. Thì các đối tượng sau ta sẽ tạo object wrapper và thao tác trực tiếp lên nó. Như v bảo trì code thì ta chỉ cần vào sửa trong class wrapper mà thôi.
+Cái này ứng dụng gọi là adapter pattern, 1 cái adapter giúp kết nối 2 cái interface lại với nhau. Khi đi làm họ bảo là đây có 1 thư viện như thế này, ta phải viết ra 1 class wrapper để dùng trong dự án từ cái thư viện này làm 1 nhiệm vụ cụ thể. Éo cần biết ông dùng các hàm gì trong thư viện, t chỉ biết là cần các hàm mà t nhét đầu vào là có đầu ra tương ứng qua cái interface kia.
+
+Ký hiệu trong Qt(C++): ngôn ngữ nào cx có dạng kiểu này
+    /**
+    * <Nội dung sẽ hiển thị khi di chuột vào hàm>
+    * @param <miêu tả đối số 1 truyền vào>
+    * @param <miêu tả đối số 2 truyền vào>
+    */
+
+Wrapper cung cho ta 1 cái interface dễ hiểu, để ta dùng trực tiếp vì nhiều khi code bên thứ ba nhìn rất rắc rối. Ta chỉ cần tạo object và dùng hàm trong interface có sẵn.
+Ví dụ: dùng thư viện Botan trong Qt. Ta có class botan.h và botan.cpp là code phức tạp coi như của bên thứ ba đi, thì cái BotanWrapper là một class kế thừa từ bên thứ ba đó và nó tạo ra các hàm vs 1 interface rất tuyệt vời giúp ta nhét đầu vào và có đầu ra mà k cần quan tâm cái thư viện phức tạp ntn.
+Tương tự: zlib là 1 thư viện động trong Qt, nó cung bởi bên thứ ba. Ta hoàn toàn có thể dùng trực tiếp các hàm vào Ct nhưng bảo trì thì vỡ mồm, và các hàm phức tạp thao tác với con trỏ và C code,.. ta dùng thì phải học code rất căng. QuaZIP là 1 wrapper class của zlib, quá tuyệt vời vì ta k phải thao tác với các hàm phức tạp trong thư viện vì ta k đi sâu mà chỉ cần thao tác với QObject, ta chỉ muốn zip và unzip 1 thư mục thôi nên dùng luôn wrapper có sẵn nv.
+
+Các bước: 
+Vào http://quazip.sourceforge.net/ tải về QuaZIP-> vào http://www.zlib.net/ tải về zlib, nó free opensouce->giải nén. 
+(Để dùng thư viện bên thứ 3, ta cần file dll. Nếu ta tải đc dll thì dùng luôn nhưng thông thường nó cho ta source code, muốn dùng ta phải tự compile ra file dll)
+Do zlib là thư viện chung chứ kp của riêng qt nên ta compile bằng cmd có mingw: vào Qt cmd trỏ tới thư mục của zlib chứa makefile->chạy mingw32-make -f <tên makefile>(nếu tùy vào mingw của ứng dụng và tên makefile của thư viện mà nó có thể khác)->có file .a và .dll cần dùng.
+Bh ta LIBS dùng TT luôn cx đc nhưng ta sẽ compile thêm thư viện động quazip là wrapper có sẵn: mở file pro của wrapper->nhét tất cả các file dll/a vừa có vào 1 thư mục LIBS-> vào file quazip.pro và thêm LIBS tới từng file trong đó->compile phát là ra file dll của thư viện động quazip chứa class wrapper(nên thêm cả INCLUDEPATH)
+Dùng wrapper trong dự án:
+Ta LIBS += tới các file dll; INCLUDEPATH tới thư mục include(tạo thư mục include chứa tất cả file h,cpp,c của zlib và quazib); Tuy nhiên như v là chưa đủ, ta còn phải trỏ đến file thư mục lib chứa các file dll nx. Chú ý khi dùng thư viện bên thứ 3 thì cần làm thêm thao tác đó và cái LIBS này sẽ có ký hiệu -L"<link tới libs chứa các dll/a>" đằng trước. Chính cái class wrapper kia cũng là 1 thư viện nên ta LIBS và INCLUDEPATH đến cả nó và zlib
+
+Mỗi lần tạo dự án cần dùng-> thêm LIBS,INCLUDEPATH và LIBS đb với -L là xong
+
+Nếu ta làm nv là nhanh gọn và xong r, nhưng chẳng hạn ta muốn xem các class của ta có những hàm gì ngay trên chính project hiện tại thì có thể thêm HEADERS/SOURCES += vào với những file có cac hàm muốn xem. Nó sẽ tự động thêm vào dự án
+
+zlib cũng như các code cũ khác chỉ dùng cho win32 nên để ở đúng chế độ
+
+Ví dụ khi ta dùng trên Linux mà makefile sẽ có code dạng khác thì có thể dùng:
+win32 { <nội dùng makefile ở win32> } 
+win64 { <nội dùng makefile ở win64> }
+unix { <nội dung makefile dùng trong unix> )
+DEPENDPATH là nơi chứa dependencies cx khá giống INCLUDEPATH
+
+Ở bên trên ta dùng 1 class wrapper để chỉ dùng hàm. Tuy nhiên cx có 1 số ng làm ra các class khác dùng zlib tạo ra như 1 biến. Đó là QZipReader và QZipWriter chỉ có điều nó k phải là 1 phần của Qt API nên là code có thể bị lỗi khi các bản cập nhật mới ra mắt. Ta sẽ dùng nó trong Qt:
+Tải qzipwriter_p.h, qzipreader_p.h và qzip.cpp về->k dùng wrapper nên ta import zlib vào trực tiếp dự án như cũ với INCLUDEPATH và LIBS-> sửa đổi tên class or tên file theo ý thích và sử dụng với replace all
+Sử dụng trên linux thì ok nhưng trên window thì phải thay đổi-> ta xóa các marco NAMESPACE và các marco tương tự khỏi các file h vì window k hỗ trợ dùng nó trong file h.
+
+Thật ra bên cạnh vc linking static và dll or pluginloader thì còn có 1 cách nx đó là copy source vào project của ta mà sử dụng trực tiếp luôn. Ở TH này ta dùng QZipReader và QZipWriter là như v, cũng giống với thư viện Botan ta dùng TT source code vào dự án. Tùy ng tạo ra họ muốn dùng nv or dùng kiểu thư viện ta phải tự hiểu.

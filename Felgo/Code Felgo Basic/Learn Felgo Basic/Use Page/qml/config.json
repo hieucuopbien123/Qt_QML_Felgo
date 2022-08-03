@@ -1,0 +1,8 @@
+{
+    "title": "TestPage",
+    "identifier": "com.yourcompany.wizardEVAP.TestPage",
+    "orientation": "auto",
+    "versioncode": 1,
+    "versionname": "1.0",
+    "stage": "test"
+}

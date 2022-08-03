@@ -1,0 +1,212 @@
+Qt:
+
+
+# Basic
+Hover+F1 để mở bảng preference
+Gui: RightClickPosition->RemoveStatusBar/RemoveToolBar
+Trong Design:Ctrl+L->Vertical Layout  Ctr+H->Horizontal Layout  CTRL+G->Grid Layout  Drag signal and slot to the window->implement function of window
+Buddies of QLabel+use & in design or code
+QMainWindow có layout riêng QToolBars,QDockWidgets,a QMenuBar,a QStatusBar và k thể set layout khác vào như cửa sổ QWidget
+Mainwindow dùng layout vs textEdit sẽ k kín màn hình mà phải setCentralWidget
+
+marco Q_OBJECT chỉ dùng khi nó là 1 loại QObject nếu k sẽ mắc lỗi staticMetaObject k phải thành viên của class đó, cx k đc tùy tiện cho class đó kế thừa QObject để dùng,nếu vẫn muốn có thể khai báo thành viên r dùng connect của class cửa sổ hiện tại
+
+"" sẽ tìm trong thư mục hiện hành, <> sẽ tất cả thư mục
+
+typedef QVariantMap QMap(QString,QVariant)
+
+-> Text của QPushButton k dùng đc HTML
+QRadioButton chỉ cho phép chọn 1, nếu trong 1 CT muốn tạo nh phần Group RadioButton thì nhét nó vào trong 1 QWidget or 1 GroupBox or cách chuẩn nhất là dùng QButtonGroup->addButton sẽ nhóm các button vào 1 group riêng + thao tác trong design(buttonGroup k có vt của widget trong vc sắp xếp mà chỉ cho phép radio button chọn 1 trong group, lấy nút đc chọn trong group, thao tác với group k sắp xếp)
+K đc dùng int như là 1 QString mà operator + vì nó sẽ convert cái số của ta sang ASCII mà ta lại chỉ muốn có cái số đó mà thôi-> ví dụ for(int i) xong i+" item"=> fix: chuyển nó thành QString r ms + => QString::number()
+thao tác với tabWidget trong QtDesign
+CTRL+SPACE hiện tất cả các hàm trong class để gõ nhanh
+Qt có đi kèm với Qt Designer giúp tạo ra file ui phức tạp hơn,cung cấp nh công cụ hơn. Qt CommandPrompt. Qt Linguist giúp dịch
+QWidget giúp tạo cửa sổ bth, QMainWindow tạo cửa sổ có widget có sẵn, chỉ QDialog có whatsthis thôi
+
+-> Cách dùng emoji: ta copy emoji có màu trên mạng về nó sẽ ở dạng string vì unicode có các ký tự rộng bao cả icon, mặc dù nó xấu vl.
+
+Khi xóa thì nên thân nào lo thân nấy, đảm bảo 1 loại dữ liệu chỉ bị xóa 1 lần, vì nếu dữ liệu đã bị xóa mà gọi xóa nx or close r lại close tiếp thì có thể abort. VD: đóng biến con-> xóa biến con -> bỏ biến con khỏi list-> xóa list -> đóng biến mẹ-> xóa biến mẹ-> đóng cửa sổ chứa biến mẹ-> đóng Ct. Để chắc dữ liệu chỉ bị xóa 1 lần, ta có thể kiểm tra nếu open thì mới đóng, nếu tồn tại thì ms xóa-> nếu k rỗng thì ms xóa.
+K dùng for trong qt mà phải dùng foreach vì for với các kiểu dữ liệu trong qt có thể sót->for each cx chỉ dùng đc vs 1 vài dạng list, nếu k dùng đc thì chuyển qua for bth
+
+Cái textEdit khi dùng set cho nó font chữ các thứ kèm chữ sẵn trong design sẵn nó sẽ lưu lại, chạy Ct nếu xóa hết chữ sẽ lại về mặc định
+chú ý dấu "" thay thành '' ở trong html
+
+-> lamba func k dùng đc vs các biến ở trong hàm đó mà chỉ dùng đc vs biến của đối sô 3, ta giả sử có biến mới tạo trong hàm gọi connect nhưng add vào vector thuộc đối số 3 thì vẫn là 1 tp của class và vẫn tính là biến của dối số 3 nên dùng đc trong slot=>Tuy nhiên ta k nên dùng như v vì 1 số TH nó éo chạy-> thay vì thế ta nên thao tác với index or dùng foreach(nếu dùng vs cả danh sách). K đc thêm &biến ngoài để dùng luôn nhé, dùng cx đc nhưng GT k còn chuẩn
+item base dù giống vẫn k đc dùng như view tránh lỗi=> item base k chọn đc nhiều phần tử để thao tác
+
+
+
+# Log
+Ví dụ khi Ct xuất hiện các thứ như qFatal, qCritical, qDebug,.. mà ta k muốn nó hiện ra 1 cửa sổ lỗi mà ta muốn lấy thông tin đó in vào 1 cái TextEdit nào đó hiện ra trong Ct của ta cho ng dùng cơ. Ta dùng:
++)QtMessageHandler qInstallMessageHandler(QtMessageHandler handler)=>hàm này cài message handler thành cái gì-> thì cái message nó sẽ k hiện ra như mặc định là trên terminal output nx mà sẽ hiện ra theo ý thích của ta. 
++)Đồng nghĩa ta phải tạo ra 1 cái QtMessageHandler->nó là 1 hàm có cấu trúc cố định như sau: 
+void myMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);=> QtMsgType là kiểu của message nhả ra vd QtDebugMsg, QtFatalMsg,.. QMessageLogContext là thông tin thêm vào đi với thông tin về log message. QString còn lại là thông tin mà in ra
+Sau khi tạo như v thì mỗi lần có log message ra bằng các hàm như qDebug nó sẽ tự hiện ra theo ý ta.
++)Sau đó nếu vẫn muốn in ra stdout thì dùng: fprintf(stderr,"Message is null");
+Lưu ý: hàm myMessageHandler phải là static, và bên trong 1 hàm static chỉ đc dùng các biến có cùng mức độ với nó(đã biết). Như v là ổn, bh ta muốn các message đó in ra 1 cái textedit=> cái text edit phải là extern từ chỗ khác or là biến static cùng file.
+->ta lại gặp vấn đề là cái textedit đó là 1 con trỏ lạ hoắc, nó k phải là cái textedit ở trong ui để ta dùng-> đơn giản ta gán biến đó = ui->textedit. Hoàn toàn ok-> Ví dụ 1 biến con trỏ instance mà k dùng đc trong hàm static->ta gán 1 con trỏ static=nó r thao tác với giá trị con trỏ static thì cx như dùng con trỏ instance kia thôi
+Ví dụ ở trong plugin bot mẫu. Ổng tạo plugin server telnet và plugin template và tester sẽ handle plugin đó. Còn plugin generator cx chỉ là cái tạo plugin mà thôi. 
+Plugin bot cx chỉ là 1 cái cho ta điều chỉnh plugin, kiểu như cài nó vào(nhận đường link tới file dll).Ng dùng tùy ý dùng các hàm install, start, stop, hiển thị thông tin,..=>giao diện ng dùng điều khiển plugin. Để cài đc plugin thì cái app dùng plugin và bản thân plugin đều phải đc dùng cùng mode 32bit hay 64 bit.
+Đương nhiên là cái plugin bot của ổng không dùng đc với mọi plugin rồi, nhưng ta chỉ cần chỉnh sửa chút là đc. Cụ thể là mỗi plugin có 1 cái interface khác nhau. Nên nếu cast từ plugin có interface này sang interface khác sẽ error.
+Đúng ra là: kiểm tra nếu file dll tồn tại thì exist-> kiểm tra nếu lấy instance thành công tức cái thứ ta lấy đúng là 1 plugin(cụ thể có config+=plugin và template+=lib)->kiểm tra nếu cast thành công từ object sang interface thì cái plugin ta thêm vào nó đúng là có cái interface trùng thì valid plugin.
+
+Khi làm với makefile, ta có thể tạo ra 1 file config.pri và bên trong lưu các parameter là các đường link fix ta sử dụng trong file pro
+marco Q_FUNC_INFO lưu thông tin của hàm chứa marco đó.=>qDebug() << Q_FUNC_INFO 
+QSysInfo lưu thông tin về hệ thông đang sử dụng: ví dụ QSysInfo:WordSize lưu kích thước chữ của hệ thống của app này
+Các code cũ ta nên run ở 32 bit tránh lỗi
+
+
+
+# Stream
+-> QTextStream: cung 1 interface cho reading và writing text vào các thứ có cấu trúc như file,stdin=> thg dùng vs file. Với các kiểu stream nó giúp cho vc viết và đọc đc specific và cung toán tử << >> dễ dàng hơn. Khi cần đọc viết thì nên dùng stream mới là chuẩn vì QString hay QByteArray vốn để lưu dữ liệu chứ mục đích chính kp là đọc dữ liệu và ghi dữ liệu, chỉ dùng TT thế với các vc đọc ghi đơn giản.
+
+-> QDataStream: cung 1 chuỗi các loại dữ liệu vào QIODevice. Ta thg dùng nó vs QByteArray và QTcpSocket. Ta nên dùng nó khi cần lưu dữ liệu theo chuỗi, ta phải luôn specific là đang lưu kiểu dữ liệu gì và đọc sang kiểu dữ liệu gì. VD: stream << quint(18); quint a; stream >> a; Mọi thứ đều phải rõ ràng, do đó nó cho phép ta lưu hàng chuỗi các loại ký tự khác nhau và ta cx chỉ đc lấy nó ra theo thứ tự pointer trong nó.
+Lưu ý: Các ký tự sẽ đc lưu cách nhau thành từng vùng riêng và đã lưu là cố định, VD: lưu 1 chuỗi string trống và 1 số int, thì dù string trống nhưng muốn lấy int thì vẫn phải lấy string ra trc r ms lấy đc int tiếp. Như v, 1 loại ký tự chỉ đc lưu duy nhất 1 lần bằng dấu << và phải lấy ra đúng tương ứng đối với 1 biến QDataStream nếu k sẽ k gán đc=>1 biến QDataStream chỉ đc lưu hoặc gán duy nhất 1 chiều và k thể gán or lấy qua 2 lần 1 loại ký tự nào đó. Nhưng nếu gán liên tiếp thì đc ví dụ gán string xong lại string tiếp thì ok vẫn là 1 string, int gán int tiếp là 2 int(tùy biến); Vs 1 biến chỉ đc chọn hoặc WriteOnly hoặc ReadOnly k đc dùng ReadWrite; Khi dùng QDataStream với QByteArray thì biến byteArray lưu các giá trị nhưng nó k còn lưu như ban đầu nx mà nó chia thành các vùng ghi số byte của các kiểu dữ liệu. Như v dataStream thực chất chỉ là lưu vào trong QByteArray và chỉ đọc đc bằng QDataStream, (như v khi truyền QByteArray đi thì dữ liệu đc bảo mật hơn vì k ghi rõ nội dung như ban đầu).=> dùng khi muốn lưu nhiều loại ký tự(tất cả các kiểu ký tự đó chỉ cần dùng 1 biến QByteArray để lưu là xong); tuyệt vời nhất là nó ghi đc TV; Khi dùng thì nên tránh ép kiểu ngầm định xảy ra, hãy gom tất cả cùng kiểu dữ liệu vào 1 cục và specific nó; => mặc dù khi lưu vào gán thì nó gán 1 lần nhưng bản chất phụ thuộc vào con trỏ, ta có thể dịch chuyển con trỏ để gán và lấy tiếp bằng device()->seek(0); sẽ lấy cái IOdevice, là cái mà QDataStream đc gán và ta có thể gọi hàm seek để dịch con trỏ; Như v tức là con trỏ đọc viết là 1, ta hoàn toàn có thể dùng mode ReadWrite tức là sau khi write vào thì ta .device->seek(0) tiếp thì read đc luôn từ đầu chứ kp là chỉ buộc read or write do con trỏ trỏ xuống cuối mất
+Ví dụ datastream lưu icon/int/string=> bh ta chỉ muốn lưu int string thôi thì buộc truyền vào 1 QIcon trống
+=>có thể dùng QDataStream để lưu vào file cx như lấy ra 1 chuỗi các data khác nhau làm CSDL đơn giản
+
+
+
+# OpenSSL
+OpenSsl là 1 thư viện phần mềm cho các ứng dụng bảo mật truyền thông mạng dùng trong đa số các website. Nó có các lệnh command mà ta có thể dùng để mã hóa tạo khóa public, private để tạo chứng chỉ ssl cho trang web. Trong website, ng ta thg dùng cloudflare cx là một ứng dụng trực tuyến tạo chứng chỉ ssl.
+
+Nhưng bên cạnh đó, openssl còn có vai trò support ssl/tls cho ứng dụng để sử dụng khi các phần mềm đó cần lấy dữ liệu từ website. Cơ chế: khi 1 phần mềm muốn lấy dữ liệu từ server về 1 website chẳng hạn thì website đó trong server đã đc chủ trang web cài ssl/tls từ trc sẽ thiết lập 1 kết nối bảo mật giữa client và server. Kết nối bảo mật này là vc truyền dữ liệu bằng khóa private và public key tạo ra session key giữa client-server(session key chỉ có hiệu lực trong phiên giao dịch đó). Và hình thức mã hóa như thế nào(hàm băm,..) sẽ tùy thuộc vào chứng chỉ tls/ssl ntn. VD: ta tạo ra 1 ứng dụng lấy dữ liệu từ máy chủ web thì bị lỗi TLS initialization fail là do vc thiết lập kết nối giữa tls/ssl bảo mật thất bại. Thật v, k phải cứ có ứng dụng connect vs server là lấy đc dữ liệu từ web mà điều kiện là cái app đó phải support phiên bản tls/ssl mà trang web đó dùng. Thật ra trong window và các trình đuyệt đang dùng nó có hỗ trợ tls r nên ta ms duyệt web đc. Còn ứng dụng qt ta tạo ra nó k hỗ trợ tls(TLS-Transport Layer Security là phiên bản mới dùng thay thế SSL-Secure Socket Layer đã lỗi thời), mà openssl có vai trò thứ 2 là support ssl/tls mọi phiên bản cho các ứng dụng=> do đó ta tải về và dùng nó trong dự án thì ms support tls. Nó giúp ta lấy dữ liệu các trang web https, còn http k cần openssl cx đc.
+->tải open ssl win 32 về->vào pro file thêm vào LIBS tới nó và thư mục bin+ dẫn tới 2 thư mục dll mà ta cần dùng->build đúng chế độ phiên bản t tải
+
+Như v khi ta tạo ứng dụng QT nó tự động khởi tạo TLS để lấy dữ liệu từ web như v. Trong qt có nhiều lớp QSsl quản lý cái chứng chỉ này nhưng ta k xét ở đây, trong vài qtr nó tự động tạo và thực hiện ngầm xong lỗi lưu vào QSslError
+
+-> Cipher suite: là 1 tập hợp thuật toán mã hóa để dùng trong bảo mật truyền tin
+TLS handshake: là hàng loạt messages, datagrams trao đổi giữa client và server. Nó bao gồm nhiều bước phụ thuộc vào thuật toán trao đổi khóa và cipher suite sử dụng ở 2 bên. RSA là một loại thuật toán mã hóa đc sử dụng phổ biến nhất trong trong thuật toán trao đổi key: 
+Client gửi message "hello", khởi tạo 1 handshake(kết nối đường truyền) từ client tới server. Message đó bao gồm TLS version mà client hỗ trợ(k hỗ trợ thì k truyền đc như trong app Qt), cipher suite mà client hỗ trợ và 1 chuỗi random string-> server gửi lại client message bao gồm server's ssl cerfiticates, server's chosen cipher suite, another random string tạo bởi server-> client verify the server's ssl cerf bằng cách gửi cho authority phát hành cái cerf đó. Nó xác nhận và client sẽ trao đổi với chủ thực sự của domain đó-> client gửi tiếp 1 random string gọi là premaster secret, nó đc mã hóa bởi public key và chỉ đc giải mã bằng private key(client nhận public key từ chứng chỉ ssl của server)->server giải mã premaster secret bằng private key->cả client và server sẽ tạo ra session key từ client random string, server random và premaster secret-> client gửi message "finished" đc mã hóa bởi session key(client is ready để trao đổi)->server send "finished" message đc mã hóa bởi session key(khóa phiên chỉ dùng đc trong phiên đó)->the handshake is completed và cuộc trao đổi diễn ra sử dụng session keys (=>đó là thuật toán RSA)
+
+Chứng chỉ tls đc cài ở trên server tuy nhiên ta có thể đảo ngc lại cài ở trên client và server support cái tls là đc, các thao tác sẽ thực hiện ngc lại nhưng làm nv phức tạp nên thôi.
+
+
+
+# Asynchronous:
+-> Để dùng QtConcurrent, thêm module concurrent. QtConcurrent cung API để tạo multi thread programs mà k dùng đến các thứ low-level như là mutex, read-write lock, semaphore như ta thg dùng vs thread. Nó tân thời bởi vì tự động chỉnh số lượng thread tùy vào số lượng processor core available trong máy. Khi đó cái app ta tạo sẽ tự động điều chỉnh phù hợp với multi-core system trong TL=> k chặn đc deadlock
+
+-> Race condition là rủi ro của phần mềm khi 1 method nào đó bị phụ thuộc vào 1 chuỗi các sự kiện khác ta k kiểm soát đc. Ví dụ method của thread này dùng biến thuộc 1 thread khác. Nhưng method đang dùng dở thì biến đấy bị xóa thì sao-> đó là rủi ro. 
+Data race là TH nhiều method cùng vào 1 biến. Trong C++ biến atomic là biến chỉ cho 1 thread dung nó
+
+-> class QMutexLocker giúp dùng mutex để unlock và lock dễ hơn. Tạo biến QMutexLocker(QMutex*), nó sẽ chạy lock() của con trỏ QMutex truyền vào và tự unlock khi QMutexLocker bị xóa(cho nên dùng biến cục bộ trong hàm, chỉ tạo biến là xong luôn)
+
+
+
+# Giao tiếp qua socket với TCP/UDP
+-> Quy trình thực ra là: 
+Ban đầu server: Ta có 1 cái máy tính chứa server có rất nhiều cổng-> cái server ấy có địa chỉ ip là địa chỉ ip của máy tính
+Thiết lập server: Cái server đc cài đặt nhận kết nối với ip là gì và cổng nào. Cái ip ở đây kp là ip của client mà là ip của cái máy chứa server, do cái máy đó có nhiều địa chỉ ip(nội bộ, internet,nội tại) song còn tùy vào ipv4 interface hay ipv6 interface, ta thích dùng cái nào ở server để trao đổi với client thì set. Còn port là cái port ở trên server mà cái socket nó tạo ra sẽ ngồi rình dữ liệu đi qua thì lấy(80 thì sẽ là trao đổi web mặc định r, nếu ta tự tạo mà kp thì có thể dùng 1 cổng trống bất kỳ). Lưu ý là nhiều client có thể truy cập vào 1 server thông qua cùng 1 cổng.
+Ban đầu client: mọi ứng dụng trong máy đều là client r, ip của client sẽ là ip của máy chứa client đó.
+Thiết lập client: Bh ta connect client với server và gửi 1 tin đi. Giả sử dùng lệnh telnet open. CLient sẽ tạo ra một socket, máy tính bên client sẽ gán 1 cổng rảnh nào đó cho socket client để trao đổi. Nó gửi yêu cầu kết nối đến server có ip và cổng mà cái socket của server đang ngồi rình. 
+=>server chấp nhận kết nối và giao tiếp.Qtr client gửi tin trải qua 4 tầng tcp/ip-> tức là thực chất nó gán source IP, des IP, source Port, des Port và giao tiếp qua đúng 4 tầng phức tạp nv.
+Nhưng rõ ràng cái qtr đó nó xử lý ngầm bên trong, ta tạo server và client thì đâu cần phải cồng kềnh tất cả. port và ip của client ta chả cần qt. Chỉ cần tạo server->cho server nghe trên ip và port nào-> tạo client gửi request vào ip và port đó là ok
+
+dùng telnet và lệnh open nó chính là 1 ứng dụng bên client gửi request open mở để xem cho server có ip nào và gửi vào cổng nào của server.
+
+
+
+# Single instance application: 
+-> Là ứng dụng chỉ chạy duy nhất 1 instance trong 1 lúc. Ví dụ ta có thể mở nhiều app notepad 1 lúc vì nó là multiple instance application và là mặc định. Còn game ví dụ ta mở LoL thì chỉ mở đc 1 cái, nếu click đúp để mở thêm 1 app nx thì nó éo chạy mà sẽ focus hiện vào cái đã mở=> Đó là single instance app.
+Để tạo ra single application thì ý tưởng là: ta chạy Ct thì ta cho mỗi instance của app sẽ kết nối tới 1 cái server xác định. Xong mỗi khi vào app ta sẽ kiểm tra, nếu cái instance này đã kết nối với server(tức nó đã tồn tại) thì exit nó luôn(return 0;). Còn nếu cái instance này chưa kết nối tới server thì tạo ra server để các lần kết nối sau sẽ thành công. Ta còn có thể điều khiển nếu đã kết nối server thì trc khi tắt đi, ta lấy một vài thông tin từ nó và dùng nó trong cái instance lần đầu bật->đương nhiên lấy thông tin thông qua server là trung gian r.
+Cái server ở đây là gì? Đương nhiên ta k thể dùng 1 cái server j bên ngoài r->ta sẽ tự tạo server trong app và cho nó kết nối.
+Trong Qt: phiên bản cũ có QtSingleApplication giúp tạo instance app với cơ chế tương tự, ta vẫn có thể tải về dùng nhưng k nên dùng nhiều code lỗi thời. Hiện tại, Qt cung cấp QLocalServer và QLocalSocket mà ta sẽ dùng tạo single app. Nhớ thêm module network.
+
+-> Ta truyền dữ liệu giữa các process bằng các kênh pipe. Có 2 loại pipe(Pipe stream):
+Anonymous Pipe: cho phép giao tiếp giữa các máy tính cục bộ, thg dùng làm kênh giao tiếp giữa các thread hay các process. Chỉ truyền tải 1 chiều, k dùng đc thông qua mạng
+Named Pipe: hoạt động theo theo mô hình client/server. Hỗ trợ giao tiếp 2 chiều và có hoạt động thông qua mạng. Để sử dụng thì tạo client/server và connect thôi. Nhiều chức năng hơn anonymous pipe.
+Về cơ bản nó khá giống socket client và server bth.
+
+
+
+# Module pro file và qmake
+
+
+
+# Cơ chế downloader-cách dùng QNetworkAccess: 
+Ta cần gán url đến trang-> truy cập trang web và lấy thông tin về trạng thái connect->lấy dữ liệu trang web tải về máy
+Tạo biến QNetworkAccessManager->gọi get đến QNetworkRequest chứa url là link trang web cần lấy->connect signal finished() của QNetworkAccessManager vs slot ghi downloader->đọc bằng QNetworkReply readAll là xong
+Lưu ý: nhớ deletaLater đi khi finished cái manager, kiểm tra lỗi trong qtr nx
+
+
+
+# Deploy
+Để deploy 1 app lập trình thì cần build app đó ở chế dộ Release. Chế độ build profile là nằm ở giữa debug và release ít dùng nên ta k qt. Chế độ debug là chế độ cho lập trình viên code, nó dễ dàng cho lập trình viên kiểm tra lỗi khi chạy code(mặc dù có 1 số lỗi mà chỉ release ms nhìn ra), nó bao gồm nh thông tin về code nên nặng hơn nhiều so với CT exe build ở release. Chế độ release dành cho ng dùng vì chỉ cần chạy đc chứ k cần qt vc phát hiện lỗi.
+
+Khi deploy Ct tùy vào hệ điều hành khác nhau mà phải deploy các cách khác nhau. Trên desktop có Linux, MAC, Windows, còn trên phone có Android, IOS, Embedded. Các ứng dụng Qt tương thích với mọi hệ điều hành nên chỉ cần build lại là dùng đc vs hệ điều hành khác. Ở đây ta chỉ qt tới windows.
+
+-> Cách deploy:
+Ta cần add các dependencies vào cùng 1 chỗ app. Thêm thủ công bằng cách thêm các file dll ở trong máy mà Ct cần nhưng cách này gây 1 số lỗi có thể éo tìm ra đc. Ta có thể install bằng các tool mà Ct cung cấp. K chỉ Qt, thông thường các ngôn ngữ lập trình có hỗ trợ sẵn các tool như v. 
+=>dùng windeployqt ở trong thư mục bin(cùng vị trí vs các file dll)(k thể mở trực tiếp mà dùng Qt cmd): ta cần chọn đúng thư mục ming 32 hay 64 tùy vào ta build ntn->mở commandPrompt for Qt-> chỉ cần lấy file exe của qt ra 1 thư mục khác mà ta deploy vào đó-> cd trỏ đến nơi có cái file exe đó
+(=>các lệnh qt cmd thg dùng: cls / dir / gõ tên file + bấm tab sẽ tự hiện ra / windeployqt -h (là lệnh liệt kê các options deploy))
+(-> gõ windeployqt -h )-> gõ windeployqt <link đến file exe cần deploy> 
+=>thế là mọi thứ đc add, ta mở file exe đó ra là có r
+
+-> Cách cài app thành 1 file installer duy nhất sau khi deploy:
+1 folder installer cơ bản thì có: 1 thư mục config gồm 1 file xml chứa thông tin về app như tên, version,..; 1 thư mục packages gồm các components, có thể có nhiều components vì khi ta cài 1 app thì có thể có nhiều component ta muốn cài, và khi cài thì ta có quyền chọn cài component nào. Mỗi component có thư mục data, meta. Thư mục data chứa file exe với dependencies(dll,..) ta deploy bên trên. Còn meta chứa nhiều file, trong đó có 1 file package.xml chứa thông tin về vc install; 
+Để làm vc này ta dùng 1 tool khác của qt là Qt Installer Framework, tải về-> download.qt.io-> official release->qt_installer_framework-> tải về cho bản window-> cài. Thư mục của nó có 2 cái qtr: thứ nhất là bin có binarycreator là Ct exe làm nv gom các file lại thành 1 cái installer(k thể chạy tt mà dùng qt cmd vs các exe đi kèm app); thứ 2 là example có các ví dụ về file cài đặt cứ lấy 1 cái mà dùng;
+ta lấy 1 example cơ bản là tutorial->copy sang nơi muốn tạo, đổi tên và chỉnh sửa các file thành nội dung của ta và xóa các thứ k cần thiết-> chú ý file chỉnh thông tin ở config.xml và package.xml và copy các dependencies với exe vào thư mục data.
+Khi chỉnh sửa cái script ta bỏ đi vì khác phức tạp chưa học chuyển thành <Default>true</Default>
+->Mở qt cmd-> trỏ đến binarycreator-> <link tuyệt đối đến binarycreator>\binarycreator.exe -c config\config.xml -p packages <tên app>.exe
+->gửi file installer cho ng khác
+
+=>thật ra vc nén thành 1 cái installer nó đòi hỏi nh thứ khác và đó chỉ là cơ bản. Nếu ta muốn cái app của ta xuất hiện trên thanh start menu của window thì cần chọn examples khác=> ta có thể search qt document cho tất cả các examples này
+
+Khi tìm các file dll thì có thể gặp VD QGui4.dll và QGuid4.dll thì cái có d là dùng chạy ở folder debug
+
+Còn 1 app khác chung hơn là Dependencies Walker hướng dẫn của voidrealm
+
+-> App bundle là thứ giúp đóng gói ứng dụng mobile, chứa file thực thi đã biên dịch và hình ảnh âm thanh sử dụng bởi ứng dụng. Khi tạo ứng dụng android, khó là làm sao để hoạt động được với mọi thiết bị android. Người ta có thể tạo 1 file apk duy nhất cùng với code và resource của tất cả các thiết bị android khác nhau or nhắm đến từng máy riêng biệt với multiAPKs. Nhưng muốn tương thích với càng nhiều thiết bị thì cái APK sẽ càng phình to ra. Google cho ra đời Android App Bundle định dạng .aab thay thế cho file APK. Ta chỉ cần publish 1 gói ứng dụng .aab còn lại google play sẽ lo phần còn lại, ai dùng máy gì tải gg play sẽ dùng dynamic feature APKs tương thích với từng thiết bị. 
+
+
+
+# Other: 
+-> Shared compilation và static compilation: từ trc đến h là ta dùng shared compilation để tạo ra phần mềm thì nó thiếu file dll-> nguyên nhân là khi ta compile thì nó shared để dùng chung file dll có sẵn trong qt để dùng còn static compilation sẽ compile các file dll kèm luôn với file exe-> 1 file exe duy nhất. Static compile k hoàn toàn apply toàn bộ dll vào exe mà nó sẽ chừa lại các file dll có sẵn trong window hỗ trợ(k xét linux) k cần đính kèm, nhưng khi xuất ra vẫn chỉ có 1 exe đáp sang máy win khác chạy vẫn đc->static file nặng hơn.
+Tạo static compile trong qt: sẽ học về sau
+
+-> Bản chất của kế thừa: 
+Khi ta thao tác với code đáng lẽ ta dùng public, nhưng sinh ra private và protected vì mục đích bảo mật và k muốn giá trị biến bị thay đổi bởi những thứ khác. Khi ta viết cho class 1 hàm làm 1 chức năng gì đó, ta thấy cái hàm đó lớn quá cần thu nhỏ lại, nv cái hàm bên trong chỉ dùng cho mình nó thôi nên ta để là private, nhưng lại thấy 1 số lớp kế thừa từ nó cũng có thể tái sử dụng mà k muốn viết lại nên chuyển sang protected, cũng như các hàm ta cần override thì để protected cho ng dùng sử dụng khi kế thừa.
+Trap chú ý signal slot protected thì lớp kế thừa dùng đc, nhưng nếu nó là biến thì kp kế thừa nên k dùng đc nhé
+Khi nào ta nên khai báo trong class private(có set/get)/public, khi nào nên khai báo con trỏ trong hàm khởi tạo=> ta khai báo trong class nếu đó là một thuộc tính rằng class có nó và ta sẽ cần đến các thuộc tính đó ở ngoài; ta khai báo trong hàm khởi tạo biến bth nếu như dùng tức thời trong hàm khởi tạo mà thôi, ra ngoài sẽ bị xóa ngay; còn khai báo con trỏ trong hàm khởi tạo khi nó kp là thuộc tính, mà muốn nó tồn tại mãi mãi trong Ct, ví dụ cần nó để phát signal/slot, nhưng ta nên khai báo nó là thuộc tính sẽ tốt hơn.
+
+-> Cách thêm 1 lib bất kỳ vào qt=>ta tải 1 bản gì đó ở trên mạng về thì luôn xuất hiện 1 folder chứa các file dll(k tính đến vc dùng file header mà chỉ là dll)=> ta thêm LIBS+=-L<link đến directory chứa dll> và thêm LIBS+=-l<tên file.dll trong cái link kia muốn dùng>
+=>khi muốn cài cái gì vào qt thì link file dll của nó nv
+
+Cài mingw cho qt các phiên bản=> tải về và mở Tools->Options->Kits->Debugger->Add vào là dùng
+
+-> pb: file exe là tập tin cài đặt và chạy ứng dụng windows do ta tự tay tùy chỉnh
+file msi(microsoft installer) khi cài đặt ứng dụng window thì ta k cần làm gì trong quá trình cài đặt 
+File .exe cho phép kiểm soát hoàn toàn quá trình cấu hình ứng dụng là loại file thường chọn để tải
+Chỉ có thể cài đặt một file .msi 1 lúc trong khi có thể cài đặt nhiều file .exe cùng lúc
+
+-> Phân biệt:
+Windows là 1 họ hệ điều hành với nh phiên bản và công dụng khác nhau, trong đó nổi bật là window desktop và window server. 
+Window Server là 1 nhánh của hệ điều hành máy chủ của microsoft->quản lý cơ sở hạ tầng, đảm bảo tính an toàn và cung cấp môi trường máy chủ làm vc(dùng làm các server ấy). Nó thích hợp các lập trình cơ sở dữ liệu như Access, MSSQL,...
+Window Desktop là Ct phần mềm máy tính quản lý phần cứng tài nguyên máy tính, cung cấp môi trường làm vc cho ng dùng phát triển và sử dụng ứng dụng trên máy ez như máy tính của ta bh đang dùng(nv là cta đúng ra là đang dùng window desktop chứ kp là window k đâu).
+
+-> Banner Grabbing là 1 kỹ thuật gửi bad request để đạt đc thông tin về 1 hệ thống máy tính trên mạng và các dịch vụ đang chạy trên cổng mở của nó. Ta có thể lấy đc thông tin về server, phiên bản,... Có hẳn tool để làm vc này=> Để làm vc này TT trên window-> control panel-> programs-> turn window features on or off-> bật telnet client-> mở commandPrompt-> telnet-> open <tên web(k có http vd: www.google.com)> 80 -> chờ 1 lát ấn CTRL+C để lấy thông tin. Lỗi bad request 400 là lỗi xuất hiện khi gửi tới máy chủ trang web 1 yêu cầu mà yêu cầu này k chính xác khiến máy chủ k hiểu đc sẽ trả ra lỗi đó-> tùy vào trang web có cách hiên thị lỗi khác nhau
+Telnet: là hệ thống giúp kết nối với các ứng dụng từ xa. Bật telnet client trên window cho phép ta kết nối gửi request bất kỳ tới bất cứ 1 server nào với syntax: open <tên ip của server> <số cổng kết nối> => với các server tự tạo ta có thể dùng số công bất kỳ từ 1024 đến 65535 còn nếu kết nối với server internet thì dùng port 80 => ta có thể tạo ra server bằng Qt r dùng telnet thư kết nối với server đó=> ta có thể kết nối với bất cứ server nào đang kết nối với hệ thống mạng luôn
+Mặc định là dùng giao thức TCP để trao đổi dữ liệu-> thì mỗi máy khi kết nối mạng có 1 ip xác định(chứ kp phần mềm)-> 1 cái máy tính lớn làm server lưu vô số CSDL của nhiều trang web thì các trang web đó có cùng 1 ip là ip của cái máy tính lớn lưu csdl đó. Còn khi trao đổi thì ta nói là trao đổi giữa 2 ứng dụng client server với nhau chứ kp là trao đổi 2 máy với nhau. Khi dùng phương thức TCP thì server và client mỗi bên đều tạo ra 1 socket ở phần chuyển giữa tầng transport và application có vai trò specific ứng dụng nào trong máy yêu cầu trao đổi. Điều kiện trao đổi thì đã biết là CLIENT có 1 cổng mở và hai bên biết địa chỉ ip của nhau(cổng của server đc thiết lập fix sẵn r).
+
+-> Qt có quá nhiều thứ: Khi kết thúc CB, ta nên tìm các tools, các archive(third party), các widgets có sẵn trên mạng để làm các tính năng hay ho do các ng dùng khác đã tạo ra. Hầu hết các thứ ta nghĩ ra đều đã có ng làm các class về nó rồi.
+
+QMainWindow khi add icon k đc do lỗi=>thử add lại tất cả
+
+qrc lưu file dưới dạng binary->ném thẳng vào exe khi compile
+
+-> Nếu ta dùng C trong Qt thì file exe chạy k cần dll nhưng dùng C++ or các hàm trong thư viện của qt thì ms cần
+
+Dùng debug, 1 số lỗi khi chạy Ct bth lúc đc lúc k or hiện lỗi k rõ ràng, việc compile ở chế độ debug sẽ giúp phát hiện chuẩn và rõ là lỗi gì.
+Ta có thể theo dõi biến or edit(right click biến); rê chuột vào code để hiện giá trị; edit break point(right click) type,..,vd điều khiển cho vòng lặp chạy đến bao nhiêu; theo dõi các hàm ở tầng dưới, step in/out;
+
+Ví dụ: khi ta tạo ra 1 cái plugin SDK chẳng hạn, mà bên trong ta dùng 1 cái thư viện rất lớn bên thứ 3, ví dụ dùng zlib-> mỗi lần ta compile cái plugins thì nó sẽ compile lại toàn bộ cái zlib=> điều này là occho và rất lâu. Thay vào đó ta có thể xử lý: vì khi chạy xong thư viện thì cx chỉ tạo ra dll là cùng nên ta sẽ viết trong file pro(makefile) là nếu file dll tồn tại thì sẽ k build lại nó nx. Nhờ v mà lần đầu compile lâu nhưng các lần sau rebuild nhanh hơn nh=>cần học shell script
+
+RightClick->Refactor->Add definition in cpp 
+Ctrl+SHIFT+UP/DOWN => di chuyển 1 dòng
+
+Trong Qt Creator có 1 dự án dài-> analyze file-> ta có thể nhảy đến bất cứ hàm nào ta muốn.
+Khi viết QString dài quá thì xuống dòng vẫn viết "" như bth
+
+Để dùng màn hình console trong Qt: Projects->Run->run in terminal.
+Nếu ta dùng cmd để mở exe thì cái cmd hiện thời sẽ biến thành console của app. Nếu ta add đủ các file dll và chạy app console bằng cách click đúp thì sẽ hiện ra 1 console mới của app chúng ta=> console app như 1 app dung cmd v.
+
