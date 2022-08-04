@@ -1,4 +1,5 @@
 ﻿# Profile và qmake:
+
 -> Basic:
 Other project->subdirs project: giúp cấu trúc các qmake project theo sơ đồ phả hệ. Mặc dù có nhiều project và có nhiều file main,.pro nhưng chỉ đc chạy 1 cái 1 lần-> tiện khi dùng nh nhiều project phục vụ cho 1 Ct thì nên gom chung vào 1 project lớn như v. 
 Khi tạo ra các project như v thì file pro sẽ có biến TEMPLATE = lib/subdirs/.. báo hiệu thuộc loại nào

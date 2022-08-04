@@ -1,5 +1,4 @@
-Window Service(daemons) là 1 chương trình máy tính chạy ở nền mà k cần sự tác động từ ng dùng. Ta có thể cài đặt cho nó chạy thủ công hoặc bằng sự kiện. Khi ta bật máy thì cx có window service chạy ngầm và kết thúc khi ta tắt máy. 
-Nó thg dùng khi 1 ứng dụng cần chạy liên tục. Ng ta sẽ viết code cho nó chạy ở nền và k có sự tg tác of ng dùng. Ví dụ khách hàng yêu cầu 1 ứng dụng chạy ngầm để tổng hợp dữ liệu bán hàng từ các server chẳng hạn..
+### Window Service
 
 Qt Solutions Archive là 1 component của Qt hỗ trợ nhiều thứ trong đó có window services. Nó đã lỗi thời nhiều năm và các class is deprecated nhưng nó vẫn chạy đc, chỉ là đã ngừng nâng cấp nhưng ta vẫn phải fix một số lỗi nếu có. Ta sẽ dùng nó để tạo window service và nhiều thứ khác.
 Nếu k dùng qt solution cx ok thôi nhưng tự nhiên phải học thêm và làm bnh thứ. Bên trong qtsolution có examples nx

@@ -119,10 +119,6 @@ Về cơ bản nó khá giống socket client và server bth.
 
 
 
-# Module pro file và qmake
-
-
-
 # Cơ chế downloader-cách dùng QNetworkAccess: 
 Ta cần gán url đến trang-> truy cập trang web và lấy thông tin về trạng thái connect->lấy dữ liệu trang web tải về máy
 Tạo biến QNetworkAccessManager->gọi get đến QNetworkRequest chứa url là link trang web cần lấy->connect signal finished() của QNetworkAccessManager vs slot ghi downloader->đọc bằng QNetworkReply readAll là xong
@@ -157,6 +153,24 @@ Khi tìm các file dll thì có thể gặp VD QGui4.dll và QGuid4.dll thì cá
 Còn 1 app khác chung hơn là Dependencies Walker hướng dẫn của voidrealm
 
 -> App bundle là thứ giúp đóng gói ứng dụng mobile, chứa file thực thi đã biên dịch và hình ảnh âm thanh sử dụng bởi ứng dụng. Khi tạo ứng dụng android, khó là làm sao để hoạt động được với mọi thiết bị android. Người ta có thể tạo 1 file apk duy nhất cùng với code và resource của tất cả các thiết bị android khác nhau or nhắm đến từng máy riêng biệt với multiAPKs. Nhưng muốn tương thích với càng nhiều thiết bị thì cái APK sẽ càng phình to ra. Google cho ra đời Android App Bundle định dạng .aab thay thế cho file APK. Ta chỉ cần publish 1 gói ứng dụng .aab còn lại google play sẽ lo phần còn lại, ai dùng máy gì tải gg play sẽ dùng dynamic feature APKs tương thích với từng thiết bị. 
+
+
+
+# Concurrency
+# Hook
+# Multimedia
+# XML
+# Wifi
+# Winadmin
+# Pro file và qmake
+# Static and dll lib
+# OpenSSL Doxygen
+# Mã hóa
+# TCP
+# Test
+# Window service
+# Zip
+# Encode và decode
 
 
 

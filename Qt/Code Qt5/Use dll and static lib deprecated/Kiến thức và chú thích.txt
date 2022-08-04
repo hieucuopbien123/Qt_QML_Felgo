@@ -1,13 +1,4 @@
-﻿Trong quá trình chạy Ct tạo file exe thì đầu tiên file main.cpp sẽ đc compile: Ở đây, nó liên kết các file .h khai báo dùng trong main.cpp thành file .o->tiếp theo là nó linking: ở đây nó liên kết với các thư viện động cần dùng trong Ct tạo thành file .exe
-
-Thư viện liên kết động: .dll or .so(system object trong Linux). Các Ct khi chạy đc liên kết với thư viện liên kết động sẽ đọc code trong file dll này để sử dụng. Nó sẽ đọc trong quá trình chạy run-time và chỉ dùng những hàm cần thiết. Khi chạy 1 Ct nào cx có các file dll mặc định chứ kp chỉ file dll do ta tạo ra. VD trong qt: nó sẽ cần đến QtCore5.dll khi chạy Ct chẳng hạn->nếu ta chạy trong QtCreator thì nó tự động xác định vị trí file dll,còn nếu tự chạy trong thư mục debug thì ta phải tự thêm nó vào ms chạy đc.
-
-Thư viện liên kết tĩnh: trong window khi compile bằng compiler của VS thì là đuôi .lib, còn dùng mingw(gcc) cho cả window hoặc linux là đuôi .a; Điểm khác biệt của nó so với dll là nó copy toàn bộ code trong static library vào bên trong file exe, và dùng nó trong compile-time(lúc nó thêm các file.h)=> nếu thư viện động bị lỗi thì sẽ die trong lúc chạy ms thấy,nếu thư viện tĩnh lỗi thì die ngay khi compile r
-
-Các thư viện động thg rất lớn vs nh code nhưng file exe vẫn nhẹ do thêm từ ngoài vô chứ k dính luôn với exe. Thư viện động cho phép nh Ct sử dụng 1 cách TT mà k cần biên dịch lại->sửa đổi file dll k gây lỗi thì chạy theo file dll mới luôn mà k cần biên dịch lại, nhưng thời gian chạy có thể lâu hơn vì đọc file từ đĩa cứng
-Các thư viện tĩnh làm cho Ct phình to ra nhưng compile thành exe xong r thì chạy nhanh vl vì k phải đọc từ file khác mà code có sẵn trong RAM cùng với code Ct r(tốc độ ghi trong RAM nhanh hơn trong đĩa cứng nh). Nếu dùng thư viện nhẹ thì static, nặng thì dùng dll.(có thể hiểu là khi chạy 1 Ct thì toàn bộ những gì nó đã compile sẽ ốp vào trong RAM hết, do đó ứng dụng đang sử dụng mới ngốn RAM và chạy nhanh, tuy nhiên khi ta sử dụng thêm 1 cái gì khác của úng dụng đó mà động đến dll hay các thứ bên ngoài k có sẵn trong Ct (k có sẵn trong RAM) thì những cái đó sẽ ở trên đĩa cứng và nó sẽ lấy từ đĩa cứng.
-
-Các thư viện cả dll và static đều chứa code, class, hàm dưới dạng mã nhị phân=> k thể mở ra như file text->code trong thư viện đc đảm bảo là k bị sửa đổi nếu sử dụng ở Ct khác-> gửi cho ng khác dùng đc mà họ k thể sửa code
+﻿### Static and dll lib
 
 Cách tạo và dùng dll trong qt:trong C++ lib chọn shared library->trong file pro sẽ có TEMPLATE=lib->tạo sẵn 2 file .h, trong đó file global sẽ định nghĩa marco. Khi compile thì marco này sẽ tạo ra thứ gọi là symbol, vai trò như 1 cái bookmark đánh dấu báo hiệu rằng cái shared library có thể export đi->tạo lệnh->build nó(k đc run)->copy tất cả .dll của thư viện vào thư mục debug,release của Ct(build để có các cái đó)->chú ý compile file dll ở 32 hay 64 thì phải đúng->vào file pro: LIBS += <path tới file dll>->include file h và dùng. Khi distribute app thì gửi exe và dll.
 

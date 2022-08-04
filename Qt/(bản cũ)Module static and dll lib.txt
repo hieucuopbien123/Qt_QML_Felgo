@@ -1,0 +1,24 @@
+# Static and dll lib:
+
+-> Basic
+Trong quá trình chạy Ct tạo file exe thì đầu tiên file main.cpp sẽ đc compile: Ở đây, nó liên kết các file .h khai báo dùng trong main.cpp thành file .o->tiếp theo là nó linking: ở đây nó liên kết với các thư viện động cần dùng trong Ct tạo thành file .exe
+
+Thư viện liên kết động: .dll or .so(system object trong Linux). Các Ct khi chạy đc liên kết với thư viện liên kết động sẽ đọc code trong file dll này để sử dụng. Nó sẽ đọc trong quá trình chạy run-time và chỉ dùng những hàm cần thiết. Khi chạy 1 Ct nào cx có các file dll mặc định chứ kp chỉ file dll do ta tạo ra. VD trong qt: nó sẽ cần đến QtCore5.dll khi chạy Ct chẳng hạn->nếu ta chạy trong QtCreator thì nó tự động xác định vị trí file dll,còn nếu tự chạy trong thư mục debug thì ta phải tự thêm nó vào ms chạy đc.
+
+Thư viện liên kết tĩnh: trong window khi compile bằng compiler của VS thì là đuôi .lib, còn dùng mingw(gcc) cho cả window hoặc linux là đuôi .a; Điểm khác biệt của nó so với dll là nó copy toàn bộ code trong static library vào bên trong file exe, và dùng nó trong compile-time(lúc nó thêm các file.h)=> nếu thư viện động bị lỗi thì sẽ die trong lúc chạy ms thấy,nếu thư viện tĩnh lỗi thì die ngay khi compile r
+
+Các thư viện động thg rất lớn vs nh code nhưng file exe vẫn nhẹ do thêm từ ngoài vô chứ k dính luôn với exe. Thư viện động cho phép nh Ct sử dụng 1 cách TT mà k cần biên dịch lại->sửa đổi file dll k gây lỗi thì chạy theo file dll mới luôn mà k cần biên dịch lại, nhưng thời gian chạy có thể lâu hơn vì đọc file từ đĩa cứng
+Các thư viện tĩnh làm cho Ct phình to ra nhưng compile thành exe xong r thì chạy nhanh vl vì k phải đọc từ file khác mà code có sẵn trong RAM cùng với code Ct r(tốc độ ghi trong RAM nhanh hơn trong đĩa cứng nh). Nếu dùng thư viện nhẹ thì static, nặng thì dùng dll.(có thể hiểu là khi chạy 1 Ct thì toàn bộ những gì nó đã compile sẽ ốp vào trong RAM hết, do đó ứng dụng đang sử dụng mới ngốn RAM và chạy nhanh, tuy nhiên khi ta sử dụng thêm 1 cái gì khác của úng dụng đó mà động đến dll hay các thứ bên ngoài k có sẵn trong Ct (k có sẵn trong RAM) thì những cái đó sẽ ở trên đĩa cứng và nó sẽ lấy từ đĩa cứng.
+
+Các thư viện cả dll và static đều chứa code, class, hàm dưới dạng mã nhị phân=> k thể mở ra như file text->code trong thư viện đc đảm bảo là k bị sửa đổi nếu sử dụng ở Ct khác-> gửi cho ng khác dùng đc mà họ k thể sửa code
+
+-> Phân biệt Extension, Plugin, Add-in, Add-on vs 2 cái trên: 
+2 cái trên là giúp ta thêm thư viện vào để phục vụ cho vc lập trình, sử dụng đc code có sẵn mà k cần tự viết.
+Về cơ bản 4 cái này giống nhau và đc dùng lẫn cho nhau: extension(tiện ích mở rộng);
+plugin: phần mềm có thể do cả 3 bên tạo ra(thứ nhất là nơi viết ra phần mềm, thứ 2 là ng dùng, thứ 3 là hãng viết ra các phần mềm hỗ trợ or bên ngoài) thì plugin có thể giúp cho phần mềm đc mở rộng đính kèm với phần mềm gốc khi mà phần mềm gốc k thể đáp ứng đc nhu cầu ng dùng or đáp ứng đc thì rất mất tg
+module là 1 thành phần 1 bộ phận trong 1 tổ chức. Trong lập trình thì nó là những thành phần có thể tháo ra lắp vào. Ví dụ: gắn 1 đoạn code là 1 module vào để thực hiện 1 thao tác nào đó
+
+Có thể tạo app dùng plugin(nó khá giống dll)
+
+plugin hay dll nó khá giống vc ta khai báo thêm 1 cặp h/cpp và dùng trong app(ta có thể dùng vs các thuộc tính trong app bằng cách truyền đối số đầu vào hàm),nhưng thư viện ta dùng khi có 1 lượng hàm lớn có các thuộc tính và định nghĩa rất nhiều hàm làm vc vs thuộc tính đó để tạo 1 chức năng lớn(dùng dll vì ta chỉ lấy ra những hàm cần dùng), còn plugin chỉ dùng khi làm hoàn toàn 1 chức năng nào đó, h/cpp dùng cx ok nhưng nếu Ct quá dài thì nó như static lib v.
+

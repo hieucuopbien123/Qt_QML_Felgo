@@ -1,0 +1,24 @@
+# Window Service
+
+-> Basic:
+Window Service(daemons) là 1 chương trình máy tính chạy ở nền mà k cần sự tác động từ ng dùng. Ta có thể cài đặt cho nó chạy thủ công hoặc bằng sự kiện. Khi ta bật máy thì cx có window service chạy ngầm và kết thúc khi ta tắt máy. 
+Nó thg dùng khi 1 ứng dụng cần chạy liên tục. Ng ta sẽ viết code cho nó chạy ở nền và k có sự tg tác of ng dùng. Ví dụ khách hàng yêu cầu 1 ứng dụng chạy ngầm để tổng hợp dữ liệu bán hàng từ các server chẳng hạn..
+
+Để 1 service chạy cần: install nó->start nó.
+Để install: dùng sc command của cmd window(trong linux cx tương tự có command khác để cài service)
+
+Upstart(tự động khởi động): là một phần mềm được thiết kế với tính linh động cao. Chúng giúp tự động khởi động các chương trình bị tắt đi một cách liên tục. Chúng giúp các chương trình luôn trong trạng thái sẵn sàng hoạt động. Cụ thể vs upstart ta có thể biến 1 file exe chạy liên tục tự động, nó là 1 kiểu thay thế cho vc khởi động các service trong máy tính, chạy các Ct tự động khi máy tính đc bật lên.
+Trong window ta có thể dùng upstart cho 1 file exec bằng lệnh sc: Nhưng trc hết bật cmd bằng right click+run as administrator(nếu k sẽ bị access denied)
+->Để install: sc create "<tên service>" binpath="<link tới file của service>" start=auto
+(start = auto sẽ tự chạy khi bật máy)
+-> sc stop <tên service>
+-> sc delete "<tên service>" ->phải stop trc r ms xóa nhé
+->Để chạy service nếu chưa chạy: net start "<tên service>" và: net start để hiển thị các service đang chạy trên máy
+(sc là viết tắt của service control - ta tạo ra 1 app controller cx chỉ là tương tự cái này thôi)
+
+Ta có thể install và chạy service với administrator cmd, sau đó dùng controller trong examples để điều khiển nó ví dụ in trạng thái, -v
+
+Để có thể start service thì k thể chạy mỗi file exe k, ta phải deploy nó thành app r mới dùng đc. Nếu k ta sẽ chỉ dùng đc TT để debug tìm lỗi mà thôi.
+
+Khi dùng service thì nó sẽ chạy ngầm, đồng nghĩa ta k thể thấy trên TaskManager, và ta vẫn có thể thao tác với nó thông qua controller=> nếu dùng nó kết hợp vs hooking thì có thể theo dõi máy tính của 1 người khác mà họ k phát hiện ra.
+

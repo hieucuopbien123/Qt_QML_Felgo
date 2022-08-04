@@ -1,0 +1,22 @@
+# Zip
+
+-> Basic:
+zip file(.zip) là 1 archive, 1 file format lưu các file bị nén lại, giảm dung lượng. Cấu trúc file nén bên trong dùng các thuật toán phức tạp vl. Dùng WinRAR nén và giải nén file. Cx có nhiều phần mềm khác như 7-zip(đuôi .7z). Các phần mềm cx cho ta đặt mật khẩu cho file nên nhiều khi tải về giải nén nó yêu cầu mk ms đc, khi đặt mật khẩu nó dùng các pp mã hóa như AES-256,.. Trong Linux và Mac OS còn có file đuôi .tar.gz tương tự.
+
+PKZIP là 1 phần mềm máy tính giúp thao tác với file zip, nó là 1 trong những phần mềm đầu tiên khởi nguồn cho sự phổ biến của zip file.
+
+Wrapper class là 1 class bao bọc class khác. 1 trong những kiểu class thường dùng trong lập trình. 
+Ví dụ: (Khi ta dùng thư viện của bên thứ ba, ta thường kiểu phải khai báo các hàm như init và try catch). Ta dùng code của thư viện bên thứ ba dẫn đến nếu họ bảo trì code có cái gì mới là ta phải vào sửa tùm lum mọi chỗ. Wrapper class ra đời sẽ khai báo những hàm cơ bản thường dùng của cái class ta dùng ở bên thứ ba đó(muốn chỉnh sửa thêm gì cũng đc) và dùng đc luôn các thao tác init cx đc. Thì các đối tượng sau ta sẽ tạo object wrapper và thao tác trực tiếp lên nó. Như v bảo trì code thì ta chỉ cần vào sửa trong class wrapper mà thôi.
+Cái này ứng dụng gọi là adapter pattern, 1 cái adapter giúp kết nối 2 cái interface lại với nhau. Khi đi làm họ bảo là đây có 1 thư viện như thế này, ta phải viết ra 1 class wrapper để dùng trong dự án từ cái thư viện này làm 1 nhiệm vụ cụ thể. Éo cần biết ông dùng các hàm gì trong thư viện, t chỉ biết là cần các hàm mà t nhét đầu vào là có đầu ra tương ứng qua cái interface kia.
+
+Ký hiệu trong Qt(C++): ngôn ngữ nào cx có dạng kiểu này
+    /**
+    * <Nội dung sẽ hiển thị khi di chuột vào hàm>
+    * @param <miêu tả đối số 1 truyền vào>
+    * @param <miêu tả đối số 2 truyền vào>
+    */
+
+Wrapper cung cho ta 1 cái interface dễ hiểu, để ta dùng trực tiếp vì nhiều khi code bên thứ ba nhìn rất rắc rối. Ta chỉ cần tạo object và dùng hàm trong interface có sẵn.
+
+zlib cũng như các code cũ khác chỉ dùng cho win32 nên để ở đúng chế độ
+
