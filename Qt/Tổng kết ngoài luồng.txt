@@ -1,3 +1,8 @@
+-> Qt là framework lập trinh đa nền tảng, nó dùng cross-compiler:
+Cross-compiler là 1 loại compiler có thể tạo ra executable code chạy trên 1 nền tảng khác. VD: Cross-compiler của Qt giúp compiler source code viết trên window ra file exe chạy trên android -> compile 1 thiết bị, chạy trên 1 thiết bị khác
+
+Toolchain là 1 bộ công cụ xử lý các tác vụ phức tạp trong phần mềm or tạo ra phần mềm(tool chain tức là 1 chuỗi các công cụ, thg thì đầu ra của công cụ này xử lý xong sẽ là đầu vào của công cụ tiếp theo nhưng kp lúc nào cx như v). Nó có thể là tools for parsing, checking, compiling, linking, configuring, packaging and deploying a software to the target platform-> 1 toolchain có thể làm tất cả các thứ đó chẳng hạn.
+
 -> Qt for android:
 Cách tải Qt-> vào trang tải-> chọn open source-> kéo dưới cùng-> download Qt installer. Kbh đc ấn nhầm vào try k là ăn cứt luôn, mất mẹ tài khoản free.
 
